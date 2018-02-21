@@ -1,4 +1,5 @@
 ---
+id: 5172ef5f-0e2b-434b-8752-f9d4bef7a230
 name: ship
 costumes:
     - 'ship_idle'
@@ -6,6 +7,6 @@ sounds: []
 animations: []
 self_sufficiency: 0
 user_code:
-    __init__: |
+    __init__:
 base_class: MovingSprite
 

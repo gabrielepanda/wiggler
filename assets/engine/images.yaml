@@ -1,0 +1,19 @@
+data_file: boss_asteroide.png
+id: 7dd2b8b7-7eac-48c7-bae1-5982289043e3
+name: boss_asteroide
+---
+data_file: space_1.png
+id: b1869d87-261b-42c2-b8e6-e4e4422dc1ef
+name: space_1
+---
+data_file: stars.jpg
+id: 3a557a33-d142-493b-bab8-6f9e0e6254b7
+name: stars
+---
+data_file: astro_baby_c8.png
+id: a0321937-7a2d-41d6-9fe3-f27429db8b41
+name: astro_baby_c8
+---
+data_file: astro_baby_c3.png
+id: 336bb81b-dc95-44c0-880c-75449c9b27aa
+name: astro_baby_c3

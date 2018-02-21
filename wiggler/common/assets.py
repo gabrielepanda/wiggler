@@ -1,3 +1,12 @@
+import uuid
+import os
+import yaml
+import pkg_resources
+
+from wiggler.core.colorlog import log
+
+class NotAllowedError(Exception):
+    pass
 
 class AssetInstance(object):
     def __init__(self, asset_id):
@@ -15,6 +24,14 @@ class AssetInstance(object):
         if 'file' in raw_definition:
             self._data_file = self._meta['data_file']
 
+class CatalogRecord(object):
+# INMEMORY SQLDB
+    def __init__(self, library, tree_id, asset_type, asset_meta):
+        self.library = library
+        self.tree_id = tree_id
+        self.asset_type = asset_type
+        self.asset_meta = asset_meta
+
 class Catalog(object):
     def __init__(self):
 
@@ -23,19 +40,28 @@ class Catalog(object):
         self.trees = {}
 
         # trivial self.trees_by_id = {}
+
         self.trees_by_asset_id = {}
         def get_trees_from_asset_id(self, asset_id):
             trees = set()
-            for asset_id, asset_path in self.assets_paths.iteritems():
-                library, tree_id, asset_type, asset_id = asset_path.split('/')
-                trees.add(tree_id)
+            for asset_record in self.assets_paths.values():
+                trees.add(asset_record.tree_id)
 
             return trees
 
         self.assets_by_tree = {}
+        def get_assets_by_tree_id(self, tree_id):
+            assets = []
+            for asset_record in self.assets_paths.values():
+                if asset_record.tree_id == tree_id:
+                    assets.append(asset_record.asset_meta)
+
+            return assets
+
         self.assets_by_library = {}
 
-        self.assets_ids = []
+        # trivial self.assets_ids = [] catalog.keys
+
         self.assets_ids_by_tree = {}
         self.assets_ids_by_library = {}
 
@@ -45,10 +71,8 @@ class Catalog(object):
         self.type_by_id = {}
         self.ids_by_type = {}
 
-
-
-    def add_asset(self, library, tree_id, asset_type, asset_id):
-        self.assets_paths[assed_id] = "%s/%s/%s/%s" % (library, tree_id, asset_type, asset_id)
+    def add_asset(self, library, tree_id, asset_type, asset_id, asset_meta):
+        self.assets_paths[asset_id] = (library, tree_id, asset_type, asset_meta)
 
     def find_deps(self, resource_type, name):
         # hard deps
@@ -106,7 +130,7 @@ class Catalog(object):
 
 #class ResourceManager()
 class AssetCatalog(object):
-    metaclass singleton
+#    metaclass singleton
 
     def __init__(self, conf):
         self._catalog = Catalog()
@@ -137,13 +161,13 @@ class AssetCatalog(object):
             self.global_catalog.add_tree(asset_tree)
 
     # source library when saving is always project
-    def save_asset(target_library, )
+    def save_asset(self, target_library, asset_id  ):
         if target_library == 'project':
             self._catalog.save_asset( target_library )
         elif target_library == 'user':
             asset = self._catalog.clone_asset(asset_id)
             self._catalog.save_asset(target_library, asset )
-        elif target_libray == 'system' and self.system_mode:
+        elif target_library == 'system' and self.system_mode:
             asset = self._catalog.clone_asset(asset_id)
             self._catalog.save_asset(target_library, asset )
         else:
@@ -151,17 +175,17 @@ class AssetCatalog(object):
             raise NotAllowedError
 
     # target library when loading is alwasy project
-    def load_asset(source_library):
+    def load_asset(self, source_library, asset_id):
         if source_library == 'system' or source_library == 'user':
             asset = self._catalog.clone_asset(asset_id)
             new_asset_id = self._catalog.save_asset("project", asset)
         self._catalog.load_asset("project", new_asset_id)
 
-    def replace_asset(libary, asset_meta, asset_data=""):
+    def replace_asset(self, library, asset_id, asset_data=""):
         self.remove_asset(library, asset_id)
         self.save_asset(library, asset_meta, asset_data)
 
-    def remove_asset(library, asset_id):
+    def remove_asset(self, library, asset_id):
         if library == 'system' and not self.system_mode:
             log("error not allowed")
             raise NotAllowedError
@@ -181,7 +205,7 @@ class AssetCatalog(object):
 
         return asset_def
 
-    def set_project_lib(self, base_dir)
+    def set_project_lib(self, base_dir):
         self.scan_library("project", base_dir)
 
     def get_all_assets(self):
@@ -220,36 +244,24 @@ class AssetTree():
             meta_file = os.path.join(self.base_dir, meta_file_name)
             self.meta_files[asset_type] = meta_file
             assets = yaml.safe_load_all(meta_file)
-            asset_ids = []
 
             if 'data_dir' in locations[asset_type]:
                 data_dir_name = locations['data_dir']
                 data_dir = os.path.join(self.base_dir, data_dir_name)
                 self.data_dirs[asset_type] = data_dir
 
-                self.load_asset_type(asset_type)
-
-    def load_asset_type(self, asset_type):
-            for asset in assets:
-                self.assets.append(asset)
-                asset_id = asset['id']
-                assets_ids.append(asset_id)
-                self.assets_by_id[asset_id] = asset
-                self.type_by_id[asset_id] = asset_type
-
-            self.ids_by_type[asset_type] = assets_ids
-            self.assets_ids += assets_ids
-
+            for asset_meta in assets:
+                asset_id = asset_meta['id']
+                self.global_catalog.add_asset(library, self.tree_id, asset_type, asset_id, asset_meta)
 
     def load_asset(self, asset_id):
-        definition = {}
         asset_data = None
-        asset_meta = self.assets_by_id[asset_id]
+        asset_meta = self.global_catalog.get_assets_by_id(asset_id)
         if 'file' in asset_meta:
             asset_type = self.type_by_id[asset_id]
             data_dir = self.data_dirs[asset_type]
             data_file_name = os.path.join(data_dir, asset_meta['file'])
-            with open(data_file, "r") as data_file:
+            with open(data_file_name, "r") as data_file:
                 asset_data = data_file.read()
 
         return asset_meta, asset_data
@@ -268,7 +280,7 @@ class AssetTree():
         write_data['locations'] = {}
         yaml.dump(self.conf_file)
 
-    def add_location(self, asset_type)
+    def add_location(self, asset_type):
         self.locations[asset_type] = {}
         self.locations[asset_type]['meta_file'] = "%s.yaml" % asset_type
         if self.types_conf[asset_type]['meta_only'] == False:
@@ -276,41 +288,30 @@ class AssetTree():
 
         self.write_conf_file()
 
-    def replace_asset(self, asset_type, asset_meta, asset_data="")
+    def replace_asset(self, asset_type, asset_meta, asset_data=""):
         self.remove_asset(asset_meta['id'])
         self.add_asset(asset_type, asset_meta, asset_data=asset_data)
 
-    def add_asset(self, asset_type, asset_meta, asset_data="")
-        asset_id = asset_meta['id']
-        self.assets.append(asset_meta)
-        self.assets_by_id[asset_id] = asset_meta
-        self.asset_ids.append(asset_id)
-        self.type_by_id[asset_id] = asset_type
-        self.ids_by_type[asset_type].append(asset_id)
-        if 'file' in assets_meta:
-            file_name = assets_meta['file']
+    def save_asset(self, asset_type, asset_meta, asset_data=""):
+        assets = self.global_catalog.get_assets_from_tree_id(self.tree_id)
+        if 'file' in asset_meta:
+            file_name = asset_meta['file']
             data_file_name = os.path.join(self.data_dirs[asset_type], file_name)
             with open (data_file_name, "w") as data_file:
                 data_file.write(asset_data)
-        yaml.dump_all(self.assets, self.meta_files[asset_type])
+        yaml.dump_all(assets, self.meta_files[asset_type])
 
     def remove_asset(self, asset_id):
-        for index, asset_meta in enumerate(self.assets):
-            if asset_meta['id'] == asset_id:
-                self.assets.pop(index)
-                self.assets_by_id.pop(asset_id)
-                self.asset_ids.remove(asset_id)
-                asset_type = self.type_by_id.pop(asset_id)
-                self.ids_byt_type[asset_type].pop(asset_id)
-                if 'file' in assets_meta:
-                    file_name = assets_meta['file']
-                    data_file_name = os.path.join(self.data_dirs[asset_type], file_name)
-                    os.unlink(data_file)
-                break
+        asset_type, asset_meta = self.global_catalog.get_asset_by_id(asset_id)
+        self.global_catalog.remove_asset(asset_id)
+        assets = self.global_catalog.get_assets_by_type(asset_type)
+        if 'file' in asset_meta:
+            file_name = asset_meta['file']
+            data_file_name = os.path.join(self.data_dirs[asset_type], file_name)
+            os.unlink(data_file_name)
         yaml.safe_dump_all(
-            save_data, metadata_file, indent=4,
+            assets, self.meta_file[asset_type], indent=4,
             default_flow_style=False)
-        yaml.dump_all(self.assets, self.meta_files[asset_type])
 
     def load_metadata_file(self, resource_meta_file_name):
         metadata = {}

@@ -1,6 +1,7 @@
 # By default, a sound with name: filename source: filename.extension will be created
 # you can override setting in here
 ---
+id: 4a1d5a94-bc6b-419f-a6ed-f272e5525225
 file: thrust.wav
 name: thrust
 loop: true

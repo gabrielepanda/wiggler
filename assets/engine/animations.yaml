@@ -1,4 +1,5 @@
 ---
+id: 16442c66-953c-48a4-92f0-26edd88bc2be
 name: explosion-large
 sound: explosion
 sheet: explode3.bmp
@@ -13,6 +14,7 @@ sequence:
     - rect: 97, 49, 47, 47
     - rect: 145, 49, 47, 47
 ---
+id: d4b6f07b-7d97-444f-a629-271262b56179
 name: bulletexplode-small
 sound: gunblast
 sheet: master.png
@@ -22,6 +24,7 @@ sequence:
     - rect: 481, 28, 35, 35
     - rect: 470, 20, 1, 1
 ---
+id: cdac2dec-59ec-43ac-85af-7a816224870e
 name: bulletexplode-medium
 sound: gunblast
 sheet: master.png
@@ -33,6 +36,7 @@ sequence:
     - rect: 481, 28, 35, 35
     - rect: 470, 20, 1, 1
 ---
+id: e230339f-dc94-46c2-ba56-7be63c8ddb7a
 name: explosion-small
 sound: explosion
 sheet: explode2.bmp
@@ -46,6 +50,7 @@ sequence:
     - rect: 61, 1, 10, 10
     - rect: 73, 1, 10, 10
 ---
+id: a0f2c70f-dfba-4041-bc95-e62db8b53e41
 name: explosion-medium
 sound: explosion
 sheet: explode1.bmp

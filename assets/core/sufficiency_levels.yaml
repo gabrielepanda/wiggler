@@ -9,38 +9,35 @@
 # metadata files tabs)
 # 6: sprite base classes removed
 
-level_0 = {
-    '__init__': {
-        'deloopify': False
-    }
-}
+---
+element: sprite
+level: 0
+__init__:
+  deloopify: false
+---
+element: sprite
+level: 1
+__init__:
+  deloopify: false
+custom_update: {}
+---
+element: controller
+level: 0
+  customer_update:
+      deloopify: true
+---
+element: controller
+level: 1
+custom_update:
+    deloopify: true
 
-level_1 = {
-    '__init__': {
-        'deloopify': False
+    #sprites_buffers_lists = [
+    #    level_0,
+    #    level_1,
+    #]
 
-    },
-    'custom_update': {}
-}
-
-sprites_buffers_lists = [
-    level_0,
-    level_1,
-]
-
-controller_level_0 = {
-    'custom_update': {
-        'deloopify': True
-    }
-}
-controller_level_1 = {
-    'custom_update': {
-        'deloopify': True
-    }
-}
-
-controller_buffers_lists = [
-    controller_level_0,
-    controller_level_1
-]
+    #controller_buffers_lists = [
+    #    controller_level_0,
+    #    controller_level_1
+    #]
 

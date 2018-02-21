@@ -1,0 +1,39 @@
+data_file: costume.png
+id: 87a17f46-99ac-4def-a735-af368e617713
+name: costume
+---
+data_file: decss.png
+id: 7b00c5d0-57ff-4d14-8bc0-b22fc10ec887
+name: decss
+---
+data_file: sprite.png
+id: f3006821-3470-452f-967b-8a0cd9b88039
+name: sprite
+---
+data_file: stop.png
+id: 37cfb676-a5eb-4bbb-a9c8-b3f437f1dfc4
+name: stop
+---
+data_file: character.png
+id: 329c30dc-b607-4be5-a0cd-9ee55916c8d3
+name: character
+---
+data_file: nosprite.png
+id: 5bfd352f-e308-4c1b-8b0e-27063e953772
+name: nosprite
+---
+data_file: nocostume.png
+id: ac298e8c-3151-446e-a45c-1c9c7bc37c6d
+name: nocostume
+---
+data_file: play.png
+id: 4b22a5d0-a141-4755-b1b4-f5bfca4046d0
+name: play
+---
+data_file: nocharacter.png
+id: 93686773-4db9-4272-a1bf-14b1beee99f4
+name: nocharacter
+---
+data_file: incss.png
+id: 5e34a5a3-0c73-4131-90fa-2f2f628dbcb4
+name: incss

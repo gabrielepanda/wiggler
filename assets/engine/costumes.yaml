@@ -1,10 +1,10 @@
 ---
-d1f6a723-3e25-411d-b847-0957184e5c0b:
-    name: ship_idle
-    sheet_id: 70525743-568e-4500-b617-bc909f9089b9
-    rect: 481, 403, 29, 29
+id: d1f6a723-3e25-411d-b847-0957184e5c0b
+name: ship_idle
+sheet_id: 70525743-568e-4500-b617-bc909f9089b9
+rect: 481, 403, 29, 29
 ---
-ab8a40a5-3593-4219-a480-9c68bb1f335d:
-    name: ship_thrusting
-    sheet_id: 70525743-568e-4500-b617-bc909f9089b9
-    rect: 481, 358, 29, 29
+id: ab8a40a5-3593-4219-a480-9c68bb1f335d
+name: ship_thrusting
+sheet_id: 70525743-568e-4500-b617-bc909f9089b9
+rect: 481, 358, 29, 29
