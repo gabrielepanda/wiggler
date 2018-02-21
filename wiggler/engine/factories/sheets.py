@@ -1,32 +1,7 @@
-'''
-animations
-defs
-{
-    'name': "name"
-    'total_duration': msec,
-    'equal_time': (true, false), #DEFAULT true
-    'sequence': [
-        ("sheet_name", (rect), duration),
-        ("sheet_name", (rect), duration),
-        ("sheet_name", (rect), duration),
-        ...
-    ],
-    'sound': { # OPTIONAL
-        "name": sound name,
-        'loop': true, false, # DEFAULT false
-    }
-}
-
-'''
 import copy
 import pygame
 
 from wiggler.engine.exceptions import ResourceError
-
-
-sheet_def_fields = {
-    'colorkey': {}
-}
 
 
 class Sheet(object):
@@ -47,12 +22,6 @@ class Sheet(object):
 
     def get_area(self, rect):
         return self.surface.subsurface(rect).copy()
-
-
-costume_def_fields = {
-    'sheet': {},
-    'rect': {},
-}
 
 
 class Costume(object):
@@ -83,13 +52,6 @@ class Costume(object):
         else:
             return self.surface, self.rect
 
-
-animation_def_fields = {
-    'sound': {},
-    'equal_time': {},
-    'total_duration': {},
-    'sequence': {},
-}
 
 
 class Animation(object):

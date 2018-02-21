@@ -1,0 +1,7 @@
+name: sufficiency_levels
+meta_only: true
+schema:
+    id: uuid
+    name: string
+    levels:
+        - text

@@ -1,0 +1,22 @@
+name: sprites
+meta_only: true
+soft_deps:
+    - costumes
+    - sounds
+    - animations
+    - scripts
+schema:
+    id: uuid
+    name: string
+    costumes:
+        - costume_id
+        - costume_id
+        - costume_id
+    animations:
+        - animation_id
+        - animation_id
+    sounds:
+        - sound_id
+    scripts:
+        - script_id
+

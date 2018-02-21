@@ -1,0 +1,6 @@
+name: musics
+meta_only: false
+scheme:
+    id: uuid
+    name: string
+    data_file: filename

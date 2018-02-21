@@ -1,3 +1,6 @@
+.eggs
+.idea
+.tox
 *.pyc
 build
 dist

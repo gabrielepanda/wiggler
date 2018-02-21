@@ -1,0 +1,17 @@
+assets_type: engine
+assets_priority: system
+assets_dir: engine
+assets:
+    animations:
+        meta_file: animations.yaml
+    costumes:
+        meta_file: costumes.yaml
+    fonts:
+        meta_file: fonts.yaml
+        data_dir: fonts
+    sheets:
+        meta_file: sheets.yaml
+        data_dir: sheets
+    sounds:
+        meta_file: sounds.yaml
+        data_dir: sounds

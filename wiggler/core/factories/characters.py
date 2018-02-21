@@ -1,10 +1,5 @@
 import pygame
 
-character_def_fields = {
-    'sprites': {}
-}
-
-
 class Character(pygame.sprite.Group):
 
     def __init__(self, resources, name, definition, **params):

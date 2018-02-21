@@ -1,0 +1,9 @@
+name: sounds
+meta_only: false
+# for reference only
+schema:
+    id: uuid
+    name: string
+    data_file: filename
+    # optional
+    loop: bool

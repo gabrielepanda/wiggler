@@ -1,0 +1,15 @@
+id:  ifoewjofi
+group: core
+dir: core
+locations:
+    templates:
+        meta_file: templates.yaml
+        data_dir: templates
+    images:
+        meta_file: images.yaml
+        data_dir: images
+    scripts:
+        meta_file: scripts.yaml
+        data_dir: scripts
+    sprites:
+        meta_file: sprites.yaml

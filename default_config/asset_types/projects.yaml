@@ -1,0 +1,10 @@
+name: projects
+meta_only: true
+soft_deps:
+    - casts
+    - images
+schema:
+    id: uuid
+    name: string
+    cast: cast_id
+    background: image or color

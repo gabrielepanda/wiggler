@@ -1,8 +1,5 @@
 import pygame
 
-def_fields = {}
-
-
 class Musics(object):
 
     def __init__(self, resources, name, definition, **params):

@@ -1,0 +1,6 @@
+name: templates
+meta_only: false
+schema:
+    id: uuid
+    name: string
+    data_file: filename

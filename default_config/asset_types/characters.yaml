@@ -1,0 +1,10 @@
+name: characters
+meta_only: true
+soft_deps:
+    - sprites
+schema:
+    id: uuid
+    name: string
+    sprites:
+        - sprite_id
+        - sprite_id

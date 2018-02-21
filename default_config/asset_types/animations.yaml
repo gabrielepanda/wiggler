@@ -1,0 +1,20 @@
+name: animations
+meta_only: true
+hard_deps:
+    - sheets
+soft_deps:
+    - sounds
+# for reference only
+schema:
+    id: uuid
+    name: str
+    equal_time: bool, default true
+    total_duration: int, msec
+    sequence:
+        - (sheet_id, (rect), duration)
+        - (sheet_id, (rect), duration)
+        - (sheet_id, (rect), duration)
+    #optional
+    sound:
+        id: uuid
+        loop: bool

@@ -1,8 +1,5 @@
 import pygame
 
-def_fields = {}
-
-
 class SoundChannels(object):
 
     def __init__(self, num_channels, reserved):
