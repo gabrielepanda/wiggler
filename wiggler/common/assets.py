@@ -10,17 +10,22 @@ class NotAllowedError(Exception):
 
 # Resouces are instantiated Assets
 class AssetInstance(object):
-    def __init__(self, asset_id):
+    def __init__(self, asset_id, asset_meta=None):
         self.instance_id = uuid.uuid4()
         self.asset_id = asset_id
         catalog = AssetCatalog()
         # if asset_id is 0 this means the resource is new
-        raw_definition = catalog.get_by_id(asset_id)
-        self._load_def(raw_definition)
+        # and doesn't need to be loaded
+        raw_definition = None
+        if self.asset_id != 0
+            raw_definition = catalog.get_by_id(asset_id)
+            self._load_def(raw_definition)
         self._asset_path = None
         self.dependencies = None
         self._data_file_name = None
-        catalog.add_instance(self.instance_id, self)
+
+        # to be defined by the subclass
+        self.asset_type = None
 
     def _load_def(self, raw_definition):
         self._meta = raw_definition['meta']
