@@ -3,7 +3,7 @@ import os
 import yaml
 import pkg_resources
 
-from wiggler.core.colorlog import log
+from wiggler.common.colorlog import log
 
 class NotAllowedError(Exception):
     pass
@@ -17,7 +17,7 @@ class AssetInstance(object):
         # if asset_id is 0 this means the resource is new
         # and doesn't need to be loaded
         raw_definition = None
-        if self.asset_id != 0
+        if self.asset_id != 0:
             raw_definition = catalog.get_by_id(asset_id)
             self._load_def(raw_definition)
         self._asset_path = None
@@ -36,12 +36,15 @@ class AssetInstance(object):
         ''' will save modifications to the instance on
         the asset then change own asset_id to that'''
         if library == 'project':
-            if id in catalog.projects:
-                just save
+            if 'id' in self.catalog.projects:
+                #just save
+                pass
             else:
                 # This is a new resource
-                save and switch
-        elif library == 'user'
+                # save and switch
+                pass
+        elif library == 'user':
+            pass
         self.catalog.save_asset()
 
 class CatalogRecord(object):
@@ -55,7 +58,7 @@ class CatalogRecord(object):
 class Catalog(object):
     def __init__(self):
 
-        self.dependency_tree
+        self.dependency_tree = []
         self.assets_paths = {}
         self.trees = {}
 
@@ -147,38 +150,64 @@ class Catalog(object):
 
         return list(hard_deps), list(soft_deps)
 
+class Paths(object):
+
+    def __init__(self):
+        req = pkg_resources.Requirement("wiggler")
+        ws = pkg_resources.WorkingSet()
+        eid = ws.find(req)
+        self.dist_location = eid.location
+        # is this is not present, try on install dir /var/lib
+        self.syslib_base = os.path.join(self.dist_location, "assets")
+        try:
+            os.stat(self.syslib_base)
+        except:
+            raise
+        self.pkg_base = pkg_resources.resource_filename('wiggler', "")
+        self.schemas_base = os.path.join(self.pkg_base, "schemas")
+        self.userlib_base = None
+
 
 #class ResourceManager()
 class AssetCatalog(object):
 #    metaclass singleton
 
-    def __init__(self, conf):
+    def __init__(self):
         self._catalog = Catalog()
+        self.paths = Paths()
+        self._asset_types = {}
 
-        self._asset_types = yaml.safe_load_all(conf['basepath'] + 'types.yaml')
+        schemas = os.listdir(self.paths.schemas_base)
+        for asset_type_filename in schemas:
+            asset_type_filepath = os.path.join(self.paths.schemas_base,
+                                               asset_type_filename)
+            try:
+                with open(asset_type_filepath, "r") as asset_type_file:
+                    asset_type_schema = yaml.safe_load(asset_type_file)
+            except yaml.YAMLError:
+                log.error("yaml parsing failed: %s" % (asset_type_filepath))
+                continue
+            self._asset_types[asset_type_schema['name']] = asset_type_schema
         ''' Add system library '''
-        syslib_basepath = pkg_resources.resource_filename('wiggler',
-                                                           "resources")
-        self.scan_library('system', syslib_basepath)
+        self.scan_library('system', self.paths.syslib_base)
 
         ''' Add user library '''
-        try:
-            userlib_basepath = conf['userlib_basepath']
-            self.scan_library(userlib_basepath)
-        except KeyError:
-            log("No userlib specified in conf")
-            pass
+        if self.paths.userlib_base is not None:
+            self.scan_library(self.paths.userlib_base)
 
-        self.libraries['project'] = None
 
-    def scan_library(self, name, base_dir):
-        self._catalog.add_library(name)
+    def scan_library(self, library_name, base_dir):
+        #self._catalog.add_library(name)
         gen = os.walk(base_dir)
         __ , __ , assets_conf_files = gen.next()
         gen.close()
-        for assets_conf_file in assets_conf_files:
-            asset_tree = AssetTree(self.base_dir, assets_conf_file)
-            self.global_catalog.add_tree(asset_tree)
+        for assets_conf_filename in assets_conf_files:
+            assets_conf_filepath = os.path.join(base_dir,
+                                                assets_conf_filename)
+            asset_tree = AssetTree(library_name, self._asset_types,
+                                   self._catalog, base_dir,
+                                   assets_conf_filepath)
+            self._catalog.trees[asset_tree.tree_id] = asset_tree
 
     # source library when saving is always project
     def save_asset(self, target_library, asset_id  ):
@@ -240,16 +269,18 @@ class AssetCatalog(object):
 
 class AssetTree():
 
-    def __init__(self, library, types_conf, global_catalog, base_dir, conf_file):
+    def __init__(self, library, types_conf, global_catalog,
+                 base_dir, conf_filename):
         self.library = library
         self.global_catalog = global_catalog
         self.types_conf = types_conf
-        self.conf_file = conf_file
-        conf = yaml.safe_load_all(conf_file)
+        self.conf_filename = conf_filename
+        with open(conf_filename, "r") as conf_file:
+            conf = yaml.safe_load(conf_file)
         self.tree_id = conf['id']
-        self.base_dir = os.path.join(base_dir, conf['dir'])
-        self.group = conf['group']
-        self.locations = conf['locations']
+        self.base_dir = os.path.join(base_dir, conf['assets_dir'])
+        self.assets_type = conf['assets_type']
+        self.assets_locations = conf['assets']
         self.data_dirs = {}
         self.meta_files = {}
 
@@ -259,14 +290,16 @@ class AssetTree():
         self.type_by_id = {}
         self.ids_by_type = {}
 
-        for asset_type, locations in self.locations.iteritems():
-            meta_file_name = locations['meta_file']
-            meta_file = os.path.join(self.base_dir, meta_file_name)
-            self.meta_files[asset_type] = meta_file
-            assets = yaml.safe_load_all(meta_file)
+        for asset_type, location in self.assets_locations.items():
+            meta_file_name = location['meta_file']
+            meta_filepath = os.path.join(self.base_dir, meta_file_name)
+            self.meta_files[asset_type] = meta_filepath
+            log.info("scanning: %s" % asset_type)
+            with open(meta_filepath, "r") as meta_file:
+                assets = list(yaml.safe_load_all(meta_file))
 
-            if 'data_dir' in locations[asset_type]:
-                data_dir_name = locations['data_dir']
+            if 'data_dir' in location:
+                data_dir_name = location['data_dir']
                 data_dir = os.path.join(self.base_dir, data_dir_name)
                 self.data_dirs[asset_type] = data_dir
 
@@ -290,21 +323,21 @@ class AssetTree():
         write_data = {}
         write_data['dir'] = self.base_dir
         write_data['group'] = self.group
-        locations = {}
-        for location in self.locations:
-            locations[location] = {}
-            locations[location]['meta_file'] = location['meta_file']
+        assets_locations = {}
+        for location in self.assets_locations:
+            assets_locations[location] = {}
+            assets_locations[location]['meta_file'] = location['meta_file']
             if 'data_dir' in location:
-                locations[location]['data_dir'] = location['data_dir']
+                assets_locations[location]['data_dir'] = location['data_dir']
 
         write_data['locations'] = {}
         yaml.dump(self.conf_file)
 
     def add_location(self, asset_type):
-        self.locations[asset_type] = {}
-        self.locations[asset_type]['meta_file'] = "%s.yaml" % asset_type
+        self.assets_locations[asset_type] = {}
+        self.assets_locations[asset_type]['meta_file'] = "%s.yaml" % asset_type
         if self.types_conf[asset_type]['meta_only'] == False:
-            self.locations[asset_type]['data_dir'] = asset_type
+            self.assets_locations[asset_type]['data_dir'] = asset_type
 
         self.write_conf_file()
 

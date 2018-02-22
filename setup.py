@@ -22,10 +22,11 @@ setup(
     ],
     keywords='scratch pygame',
     packages=find_packages(),
-    package_data={
-        'wiggler': ['resources/*/*',
-                    'resources/*.yaml'],
-    },
+#    package_data={
+#        'wiggler': ['resources/*/*',
+#                    'resources/*.yaml'],
+#    },
+    data_files=[ ("lib/wiggler", ["assets/*"] )],
     entry_points={
         'console_scripts': [
             'wiggler=wiggler.core.app:main',

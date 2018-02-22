@@ -1,7 +1,7 @@
-id:  ifoewjofi
-group: core
-dir: core
-locations:
+id: 34796a4a-0eb4-4109-8780-44fa698508cf
+assets_type: core
+assets_dir: core
+assets:
     templates:
         meta_file: templates.yaml
         data_dir: templates
