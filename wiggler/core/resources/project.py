@@ -1,3 +1,4 @@
+from wiggler.common.assets import Resource
 
 new_project_def = {
     'name': "untitled",
@@ -8,9 +9,10 @@ new_project_def = {
     },
 }
 
-class Project(object):
+class Project(Resource):
 
     def __init__(self, resman, filename=None):
+        super
         self.resman = resman
         self.needs_save = False
         self.code_status = "undef"
@@ -54,14 +56,19 @@ class Project(object):
         self.stage_background = project_def['background']
         self.characters = project_def['characters']
 
+    def get_resource_dependencies(self):
+        return cast_id
+
     def save(self, filename):
         if self.projectres is not None:
             for resource_type in self.types:
                 self.save_resources(resource_type, save_all=True)
             self.projectres.save(filename)
 
-    def load_resource
-        resource_def =
+    def load_project_assets(self):
+        # The factorymanager will have the map asset_type -> class
+        # resourcemanager is core or engine
+        self.resourcemanager.chain_load(project_id)
         self.elements[resource_type][resource_name] = instance
 
 

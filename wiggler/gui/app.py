@@ -3,10 +3,10 @@ import sys
 import traceback
 import wx
 
-from wiggler.core.events import Events
-from wiggler.core.project import Project
-from wiggler.common import AssetInstance
-from wiggler.ui.root import RootWindow
+from wiggler.gui.events import Events
+from wiggler.gui.resources.manager import ResourcesManager
+from wiggler.gui.root import RootWindow
+from wiggler.core.core import Core
 
 class Wiggler(wx.App):
 
@@ -15,25 +15,15 @@ class Wiggler(wx.App):
         sys.excepthook = self.except_hook
 
     def OnInit(self):
-        self.load_conf()
-        self.resman = ResourcesManager(self.conf)
-        self.engine = Engine(self.conf)
-        self.ui_events = Events()
-        self.project = Project(self.resman)
-        frame = RootWindow(self.resman, self.events, self.project)
+        self.core = Core()
+        self.resman = ResourcesManager()
+        #self.engine = Engine(self.conf)
+        self.events = Events()
+        frame = RootWindow(self.core, self.resman, self.events, self.project)
         frame.Show(True)
         self.SetTopWindow(frame)
-        self.ui_events.send('projload')
+        self.events.send('projload')
         return True
-
-    def load_conf(self):
-        self.conf = default_conf
-        # conf_filename = os.path.join(self.project_basepath, "conf.yaml")
-        # try:
-        #    with open(conf_filename) as conf_file:
-        #        self.conf = yaml.load(conf_file.read())
-        # except IOError:
-        #    pass
 
     def except_hook(self, exc_type, exc_value, tb):
         """

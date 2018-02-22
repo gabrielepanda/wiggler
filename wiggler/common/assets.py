@@ -8,10 +8,13 @@ from wiggler.core.colorlog import log
 class NotAllowedError(Exception):
     pass
 
+# Resouces are instantiated Assets
 class AssetInstance(object):
     def __init__(self, asset_id):
         self.instance_id = uuid.uuid4()
+        self.asset_id = asset_id
         catalog = AssetCatalog()
+        # if asset_id is 0 this means the resource is new
         raw_definition = catalog.get_by_id(asset_id)
         self._load_def(raw_definition)
         self._asset_path = None
@@ -23,6 +26,18 @@ class AssetInstance(object):
         self._meta = raw_definition['meta']
         if 'file' in raw_definition:
             self._data_file = self._meta['data_file']
+
+    def clone_and_write_instance(self, library):
+        ''' will save modifications to the instance on
+        the asset then change own asset_id to that'''
+        if library == 'project':
+            if id in catalog.projects:
+                just save
+            else:
+                # This is a new resource
+                save and switch
+        elif library == 'user'
+        self.catalog.save_asset()
 
 class CatalogRecord(object):
 # INMEMORY SQLDB
