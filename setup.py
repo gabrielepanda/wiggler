@@ -29,7 +29,7 @@ setup(
     data_files=[ ("lib/wiggler", ["assets/*"] )],
     entry_points={
         'console_scripts': [
-            'wiggler=wiggler.core.app:main',
+            'wiggler=wiggler.gui.app:main',
         ],
     },
     include_package_data=True,

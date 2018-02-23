@@ -1,19 +1,20 @@
-from wiggler.common.assets import Resource
+from wiggler.common.resource import Resource
 
-new_project_def = {
-    'name': "untitled",
-    'characters': {},
-    'background': {
-        'type': 'solid',
-        'color': "255, 255, 255",
+project_asset_file_content = {
+    "name": "project",
+    "casts": [],
+    "background" : {
+        "type": "solid",
+        "color": "255, 255, 255",
     },
 }
 
+
 class Project(Resource):
 
-    def __init__(self, resman, filename=None):
-        super
-        self.resman = resman
+    def __init__(self, asset_id):
+        self.resource_type = 'projects'
+        super(Project, self).__init__(asset_id)
         self.needs_save = False
         self.code_status = "undef"
         self.active_sprite = None
@@ -22,12 +23,6 @@ class Project(Resource):
         self.name = None
         self.abspath = None
         self.filename = None
-
-        if filename is None:
-            self.new()
-        else:
-            self.load(filename=filename)
-
 
     def change_default_background(self, back_type, back_spec):
         background_def = {
@@ -41,6 +36,9 @@ class Project(Resource):
 
     def new(self):
         return new_project_def
+
+    def generate_new_meta(self):
+        return project_asset_file_content
 
     def load_project(self, filename):
         if self.projectres is not None:

@@ -18,6 +18,5 @@ class BasicTest(unittest.TestCase):
             self.assertIs(type(asset_path), tuple)
 
 
-
 if __name__ == '__main__':
     unittest.main()

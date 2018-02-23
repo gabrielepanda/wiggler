@@ -1,6 +1,6 @@
 import wx
 
-import wiggler.ui.dialogs as dialogs
+import wiggler.gui.dialogs as dialogs
 
 
 class CharactersPane(wx.ListCtrl):

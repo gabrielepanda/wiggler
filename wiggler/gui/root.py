@@ -1,28 +1,29 @@
 import wx
 import wx.py
 
-import wiggler.ui.dialogs as dialogs
+import wiggler.gui.dialogs as dialogs
 
-from wiggler.ui.characterspane import CharactersPane
-from wiggler.ui.costumespane import CostumesPane
-from wiggler.ui.code_pane import CodePane
-from wiggler.ui.menubar import MenuBar
-from wiggler.ui.resources import ResourceManager
-from wiggler.ui.spritespane import SpritesPane
-from wiggler.ui.stagepane import StagePane
-from wiggler.ui.toolbar import ToolBar
-from wiggler.ui.tracebackpane import TracebackPane
+from wiggler.common.configuration import Configuration
+from wiggler.gui.panes.characters import CharactersPane
+from wiggler.gui.panes.costumes import CostumesPane
+from wiggler.gui.panes.code import CodePane
+from wiggler.gui.menubar import MenuBar
+from wiggler.gui.control import GUIControl
+from wiggler.gui.panes.sprites import SpritesPane
+from wiggler.gui.panes.stage import StagePane
+from wiggler.gui.toolbar import ToolBar
+from wiggler.gui.panes.traceback import TracebackPane
 
 
 class RootWindow(wx.Frame):
 
-    def __init__(self, resources, events, project):
+    def __init__(self, core, events):
         wx.Frame.__init__(self, None, -1, "Menu")
         self.events = events
-        self.project = project
-        self.resources = resources
-        self.resourcemanager = ResourceManager(self, self.resources,
-                                               self.events)
+        self.project = core.project
+        self.core = core
+        self.resources = GUIControl(self)
+        self.conf = Configuration()
         self.SetMinSize((100, 100))
         self.stage_resolution = self.resources.conf['stage_resolution']
         self.stage_pane = StagePane(

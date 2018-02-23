@@ -1,51 +1,15 @@
-import uuid
 import os
 import yaml
-import pkg_resources
 
 from wiggler.common.colorlog import log
+from wiggler.common.singleton import Singleton
+from wiggler.common.paths import Paths
+from wiggler.common.projectlibrary import ProjectLibrary
+
 
 class NotAllowedError(Exception):
     pass
 
-# Resouces are instantiated Assets
-class AssetInstance(object):
-    def __init__(self, asset_id, asset_meta=None):
-        self.instance_id = uuid.uuid4()
-        self.asset_id = asset_id
-        catalog = AssetCatalog()
-        # if asset_id is 0 this means the resource is new
-        # and doesn't need to be loaded
-        raw_definition = None
-        if self.asset_id != 0:
-            raw_definition = catalog.get_by_id(asset_id)
-            self._load_def(raw_definition)
-        self._asset_path = None
-        self.dependencies = None
-        self._data_file_name = None
-
-        # to be defined by the subclass
-        self.asset_type = None
-
-    def _load_def(self, raw_definition):
-        self._meta = raw_definition['meta']
-        if 'file' in raw_definition:
-            self._data_file = self._meta['data_file']
-
-    def clone_and_write_instance(self, library):
-        ''' will save modifications to the instance on
-        the asset then change own asset_id to that'''
-        if library == 'project':
-            if 'id' in self.catalog.projects:
-                #just save
-                pass
-            else:
-                # This is a new resource
-                # save and switch
-                pass
-        elif library == 'user':
-            pass
-        self.catalog.save_asset()
 
 class CatalogRecord(object):
 # INMEMORY SQLDB
@@ -61,8 +25,12 @@ class Catalog(object):
         self.dependency_tree = []
         self.assets_paths = {}
         self.trees = {}
+        self.libraries = {}
 
         # trivial self.trees_by_id = {}
+    def get_library_tree_ids(self, library_name):
+        tree_ids = self.libraries[library_name]['trees']
+        return tree_ids
 
         self.trees_by_asset_id = {}
         def get_trees_from_asset_id(self, asset_id):
@@ -94,7 +62,8 @@ class Catalog(object):
         self.type_by_id = {}
         self.ids_by_type = {}
 
-    def add_asset(self, library, tree_id, asset_type, asset_id, asset_meta):
+    def add_asset(self, library, tree_id, asset_type, asset_meta):
+        asset_id = asset_meta['id']
         self.assets_paths[asset_id] = (library, tree_id, asset_type, asset_meta)
 
     def find_deps(self, resource_type, name):
@@ -150,32 +119,15 @@ class Catalog(object):
 
         return list(hard_deps), list(soft_deps)
 
-class Paths(object):
-
-    def __init__(self):
-        req = pkg_resources.Requirement("wiggler")
-        ws = pkg_resources.WorkingSet()
-        eid = ws.find(req)
-        self.dist_location = eid.location
-        # is this is not present, try on install dir /var/lib
-        self.syslib_base = os.path.join(self.dist_location, "assets")
-        try:
-            os.stat(self.syslib_base)
-        except:
-            raise
-        self.pkg_base = pkg_resources.resource_filename('wiggler', "")
-        self.schemas_base = os.path.join(self.pkg_base, "schemas")
-        self.userlib_base = None
-
-
 #class ResourceManager()
 class AssetCatalog(object):
-#    metaclass singleton
+    __metaclass__ = Singleton
 
-    def __init__(self):
+    def __init__(self, project_file=None):
         self._catalog = Catalog()
         self.paths = Paths()
         self._asset_types = {}
+        self.projectlibrary = ProjectLibrary(project_file)
 
         schemas = os.listdir(self.paths.schemas_base)
         for asset_type_filename in schemas:
@@ -193,13 +145,25 @@ class AssetCatalog(object):
 
         ''' Add user library '''
         if self.paths.userlib_base is not None:
-            self.scan_library(self.paths.userlib_base)
+            self.scan_library('user',self.paths.userlib_base)
+
+        project_library_path = os.path.join(self.projectlibrary._render_dir,
+                                        "assets")
+        self.scan_library('project', project_library_path)
+
+
 
 
     def scan_library(self, library_name, base_dir):
         #self._catalog.add_library(name)
+        self._catalog.libraries[library_name] = {}
+        self._catalog.libraries[library_name]['trees'] = []
         gen = os.walk(base_dir)
-        __ , __ , assets_conf_files = gen.next()
+        assets_conf_files = []
+        try:
+            __ , __ , assets_conf_files = gen.next()
+        except StopIteration:
+            pass
         gen.close()
         for assets_conf_filename in assets_conf_files:
             assets_conf_filepath = os.path.join(base_dir,
@@ -209,7 +173,17 @@ class AssetCatalog(object):
                                    assets_conf_filepath)
             self._catalog.trees[asset_tree.tree_id] = asset_tree
 
-    # source library when saving is always project
+    def create_asset(self, asset_type, asset_meta):
+        tree_id = self._catalog.get_library_tree_ids('project')[0]
+        project_tree = self._catalog.trees[tree_id]
+        print asset_meta
+        project_tree.save_asset(asset_type, asset_meta)
+
+    def clone_asset(self):
+        """ copy assett from disk to disk, generating new id"""
+        pass
+
+    # saves asset from project resource
     def save_asset(self, target_library, asset_id  ):
         if target_library == 'project':
             self._catalog.save_asset( target_library )
@@ -241,10 +215,9 @@ class AssetCatalog(object):
         self._catalog.remove_asset(library)
     #def get_resource(self, library, res_type, name):
 
-    def get_by_id(self, asset_id):
-        source = self._catalog[asset_id]['source']
-        lib = self.libraries[source]
-        return lib.get_by_id(asset_id)
+    def get_asset_by_id(self, asset_id):
+        __, __, __, meta = self._catalog.assets_paths[asset_id]
+        return meta
 
     def byid(self, asset_id):
         asset_def = self._catalog[asset_id]
@@ -278,6 +251,7 @@ class AssetTree():
         with open(conf_filename, "r") as conf_file:
             conf = yaml.safe_load(conf_file)
         self.tree_id = conf['id']
+        self.global_catalog.libraries[library]['trees'].append(self.tree_id)
         self.base_dir = os.path.join(base_dir, conf['assets_dir'])
         self.assets_type = conf['assets_type']
         self.assets_locations = conf['assets']
@@ -290,12 +264,11 @@ class AssetTree():
         self.type_by_id = {}
         self.ids_by_type = {}
 
+
         for asset_type, location in self.assets_locations.items():
-            meta_file_name = location['meta_file']
-            meta_filepath = os.path.join(self.base_dir, meta_file_name)
-            self.meta_files[asset_type] = meta_filepath
+            self.set_meta_files(asset_type)
             log.info("scanning: %s" % asset_type)
-            with open(meta_filepath, "r") as meta_file:
+            with open(self.meta_files[asset_type], "r") as meta_file:
                 assets = list(yaml.safe_load_all(meta_file))
 
             if 'data_dir' in location:
@@ -305,7 +278,14 @@ class AssetTree():
 
             for asset_meta in assets:
                 asset_id = asset_meta['id']
-                self.global_catalog.add_asset(library, self.tree_id, asset_type, asset_id, asset_meta)
+                self.global_catalog.add_asset(library, self.tree_id, asset_type, asset_meta)
+
+    def set_meta_files(self, asset_type):
+        location = self.assets_locations[asset_type]
+        meta_file_name = location['meta_file']
+        meta_filepath = os.path.join(self.base_dir, meta_file_name)
+        self.meta_files[asset_type] = meta_filepath
+
 
     def load_asset(self, asset_id):
         asset_data = None
@@ -321,17 +301,13 @@ class AssetTree():
 
     def write_conf_file(self):
         write_data = {}
-        write_data['dir'] = self.base_dir
-        write_data['group'] = self.group
-        assets_locations = {}
-        for location in self.assets_locations:
-            assets_locations[location] = {}
-            assets_locations[location]['meta_file'] = location['meta_file']
-            if 'data_dir' in location:
-                assets_locations[location]['data_dir'] = location['data_dir']
-
-        write_data['locations'] = {}
-        yaml.dump(self.conf_file)
+        write_data['id'] = self.tree_id
+        write_data['assets_dir'] = os.path.basename(self.base_dir)
+        write_data['assets_priority'] = self.assets_type
+        write_data['assets_type'] = self.assets_type
+        write_data['assets'] = self.assets_locations
+        with open(self.conf_filename, "w") as conf_file:
+            yaml.dump(write_data, conf_file)
 
     def add_location(self, asset_type):
         self.assets_locations[asset_type] = {}
@@ -346,13 +322,30 @@ class AssetTree():
         self.add_asset(asset_type, asset_meta, asset_data=asset_data)
 
     def save_asset(self, asset_type, asset_meta, asset_data=""):
-        assets = self.global_catalog.get_assets_from_tree_id(self.tree_id)
-        if 'file' in asset_meta:
-            file_name = asset_meta['file']
+        if asset_type not in self.assets_locations:
+            self.add_location(asset_type)
+        asset_meta_filename = self.assets_locations[asset_type]['meta_file']
+        asset_meta_filepath = os.path.join(self.base_dir, asset_meta_filename)
+        try:
+            os.stat(asset_meta_filepath)
+            assets = self.global_catalog.get_assets_from_tree_id(self.tree_id)
+        except OSError:
+            assets = []
+            self.set_meta_files(asset_type)
+
+
+        if 'data_file' in asset_meta:
+            file_name = asset_meta['data_file']
             data_file_name = os.path.join(self.data_dirs[asset_type], file_name)
             with open (data_file_name, "w") as data_file:
                 data_file.write(asset_data)
-        yaml.dump_all(assets, self.meta_files[asset_type])
+
+        assets.append(asset_meta)
+
+        with open(self.meta_files[asset_type], "w") as meta_file:
+            yaml.dump_all(assets, meta_file, default_flow_style=False)
+        self.global_catalog.add_asset(self.library, self.tree_id, asset_type,
+                                      asset_meta)
 
     def remove_asset(self, asset_id):
         asset_type, asset_meta = self.global_catalog.get_asset_by_id(asset_id)

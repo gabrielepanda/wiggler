@@ -3,7 +3,7 @@ import pygame
 import sys
 import wx
 
-from wiggler.core.events import StageEvents
+from wiggler.gui.events import StageEvents
 from wiggler.engine.stage import Stage
 
 tilemap = dict()

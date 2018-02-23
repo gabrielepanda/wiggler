@@ -1,15 +1,17 @@
-from wiggler.core.resources.manager import ResourcesManager
+from wiggler.core.resources.manager import CoreResources
 
 
 class Core(object):
 
     def __init__(self):
-        self.load_conf()
-        self.resman = ResourcesManager(self.conf)
-        self.project = ResourcesManager.new('project')
+        #self.load_conf()
+        #self.resman = CoreResources(self.conf)
+        self.resman = CoreResources()
+        self.project = self.resman.new_resource('project')
 
     def load_conf(self):
-        self.conf = default_conf
+        pass
+        #self.conf = default_conf
         # conf_filename = os.path.join(self.project_basepath, "conf.yaml")
         # try:
         #    with open(conf_filename) as conf_file:

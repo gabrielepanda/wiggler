@@ -1,6 +1,6 @@
 import wx
 
-from wiggler.ui.editor import TextEditor
+from wiggler.gui.editor import TextEditor
 
 
 class CodePane(wx.Notebook):

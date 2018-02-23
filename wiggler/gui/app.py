@@ -4,7 +4,7 @@ import traceback
 import wx
 
 from wiggler.gui.events import Events
-from wiggler.gui.resources.manager import ResourcesManager
+from wiggler.gui.resources.manager import GUIResources
 from wiggler.gui.root import RootWindow
 from wiggler.core.core import Core
 
@@ -16,10 +16,9 @@ class Wiggler(wx.App):
 
     def OnInit(self):
         self.core = Core()
-        self.resman = ResourcesManager()
         #self.engine = Engine(self.conf)
         self.events = Events()
-        frame = RootWindow(self.core, self.resman, self.events, self.project)
+        frame = RootWindow(self.core, self.events)
         frame.Show(True)
         self.SetTopWindow(frame)
         self.events.send('projload')

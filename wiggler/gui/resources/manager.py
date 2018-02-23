@@ -1,23 +1,12 @@
-import wx
+from wiggler.common.resourcemanager import ResourceManager
+from wiggler.common.singleton import Singleton
 
-import wiggler.ui.dialogs as dialogs
 
+class GUIResources(ResourceManager):
+    __metaclass__ = Singleton
 
-class ResourceManager(wx.Control):
-
-    def __init__(self, parent, resources, events):
-        wx.Control.__init__(self, parent)
-        self.parent = parent
-        self.events = events
-        self.resources = resources
-        self.events.subscribe(self, ['add_costume', 'del_costume',
-                                     'add_character', 'del_character',
-                                     'add_sheet', 'del_sheet',
-                                     'add_image', 'del_image',
-                                     'add_sprite', 'del_sprite',
-                                     'add_animation', 'del_animation',
-                                     'change_background'])
-        self.Bind(self.events.EVT_NOTICE, self.notice_handler)
+    def __init__(self):
+        super(GUIResources, self).__init__()
 
     def notice_handler(self, event):
         if event.notice == 'change_background':

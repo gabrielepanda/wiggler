@@ -7,4 +7,6 @@ schema:
     id: uuid
     name: string
     cast: cast_id
-    background: image or color
+    background:
+        type: solid
+        color: 255, 255, 255
