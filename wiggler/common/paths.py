@@ -1,7 +1,11 @@
 import os
 import pkg_resources
 
+
+from wiggler.common.singleton import Singleton
+
 class Paths(object):
+    __metaclass__ = Singleton
 
     def __init__(self):
         req = pkg_resources.Requirement("wiggler")
@@ -10,6 +14,8 @@ class Paths(object):
         self.dist_location = eid.location
         # is this is not present, try on install dir /var/lib
         self.syslib_base = os.path.join(self.dist_location, "assets")
+        self.conf_base = os.path.join(self.dist_location, "default_config")
+        self.conf_file_path = os.path.join(self.conf_base, "default-config.yaml")
         try:
             os.stat(self.syslib_base)
         except:

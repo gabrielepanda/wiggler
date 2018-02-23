@@ -25,7 +25,8 @@ class RootWindow(wx.Frame):
         self.resources = GUIControl(self)
         self.conf = Configuration()
         self.SetMinSize((100, 100))
-        self.stage_resolution = self.resources.conf['stage_resolution']
+        self.stage_resolution = tuple(map(int, self.conf.stage_resolution.split(",")))
+        print self.stage_resolution
         self.stage_pane = StagePane(
             self, wx.ID_ANY, self.resources, self.events,
             size=self.stage_resolution)
