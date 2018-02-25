@@ -4,10 +4,16 @@
 
 class ResourceManager(object):
 
-    def __init__(self):
-        super(ResourceManager, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(ResourceManager, self).__init__(*args, **kwargs)
         self.factory_map = {}
         self.resources = {}
+
+    def get_resource(self, resource_type, asset_id, *args, **kwargs):
+        factory = self._resources_map[resource_type]
+        resource = factory(asset_id, *args, **kwargs)
+
+        return resource
 
     def new_resource(self, resource_type):
         asset_id = 0

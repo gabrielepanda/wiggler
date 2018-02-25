@@ -13,8 +13,7 @@ project_asset_file_content = {
 class Project(Resource):
 
     def __init__(self, asset_id):
-        self.resource_type = 'projects'
-        super(Project, self).__init__(asset_id)
+        super(Project, self).__init__('projects', asset_id)
         self.needs_save = False
         self.code_status = "undef"
         self.active_sprite = None

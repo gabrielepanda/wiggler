@@ -1,9 +1,11 @@
+import os
 import uuid
 from wiggler.common.assets import AssetCatalog
 
 # Resouces are instantiated Assets
 class Resource(object):
-    def __init__(self, asset_id, asset_meta=None):
+    def __init__(self, resource_type, asset_id):
+        self.resource_type = resource_type
         self.instance_id = str(uuid.uuid4())
         self.global_catalog = AssetCatalog()
         # if asset_id is 0 this means the resource is new
@@ -15,11 +17,20 @@ class Resource(object):
             self.global_catalog.create_asset(self.resource_type, meta)
         self._meta = self.global_catalog.get_asset_by_id(asset_id)
         if 'data_file' in self._meta:
-            self._data_file = self._meta['data_file']
+            data_filename = self._meta['data_file']
+            data_dir = self.global_catalog.get_datadir_by_id(asset_id)
+            self._data_filepath = os.path.join(data_dir, data_filename)
+            print self._data_filepath
         self.asset_id = asset_id
         self._asset_path = None
         self.dependencies = None
         self._data_file_name = None
+
+    def load_data(self):
+        with open(self._data_filepath, "r") as data_file:
+            data = data_file.read()
+
+        return data
 
     def clone_and_write_instance(self, library):
         ''' will save modifications to the instance on

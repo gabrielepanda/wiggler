@@ -176,7 +176,6 @@ class AssetCatalog(object):
     def create_asset(self, asset_type, asset_meta):
         tree_id = self._catalog.get_library_tree_ids('project')[0]
         project_tree = self._catalog.trees[tree_id]
-        print asset_meta
         project_tree.save_asset(asset_type, asset_meta)
 
     def clone_asset(self):
@@ -218,6 +217,12 @@ class AssetCatalog(object):
     def get_asset_by_id(self, asset_id):
         __, __, __, meta = self._catalog.assets_paths[asset_id]
         return meta
+
+    def get_datadir_by_id(self, asset_id):
+        __, tree_id, asset_type, __ = self._catalog.assets_paths[asset_id]
+        tree = self._catalog.trees[tree_id]
+        return tree.get_data_dir(asset_type)
+
 
     def byid(self, asset_id):
         asset_def = self._catalog[asset_id]
@@ -279,6 +284,10 @@ class AssetTree():
             for asset_meta in assets:
                 asset_id = asset_meta['id']
                 self.global_catalog.add_asset(library, self.tree_id, asset_type, asset_meta)
+
+    def get_data_dir(self, asset_type):
+        data_dir =  self.assets_locations[asset_type]["data_dir"]
+        return os.path.join(self.base_dir, data_dir)
 
     def set_meta_files(self, asset_type):
         location = self.assets_locations[asset_type]

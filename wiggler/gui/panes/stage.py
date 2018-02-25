@@ -12,6 +12,8 @@ tilemap = dict()
 class StagePane(wx.Control):
 
     def __init__(self, parent, id, resources, events, **options):
+        # Skip initialization for now
+        return
         wx.Control.__init__(*(self, parent, id), **options)
         self.parent = parent
         self.resources = resources

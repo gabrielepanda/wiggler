@@ -1,41 +1,66 @@
+import wx
+
 from wiggler.common.resourcemanager import ResourceManager
 from wiggler.common.singleton import Singleton
+from wiggler.core.resources.manager import CoreResources
+from wiggler.gui.events import guievent, GUICommandHandler
+from wiggler.gui.resources.sprites import Sprite
+from wiggler.gui.resources.characters import Character
+from wiggler.gui.resources.casts import Cast
+from wiggler.gui.resources.images import Image
+#from wiggler.gui.resources. import
 
 
-class GUIResources(ResourceManager):
+class GUIResources(ResourceManager, wx.Control):
     __metaclass__ = Singleton
 
-    def __init__(self):
-        super(GUIResources, self).__init__()
+    def __init__(self, parent):
+        #wx.Control.__init__(self, parent)
+        super(GUIResources, self).__init__(parent)
+        self.core_resources = CoreResources()
+        self.parent = parent
+        self._resources_map = {
+            "image": Image,
+            "sprite": Sprite,
+#            "character": Character,
+#            "cast": Cast,
+        }
+        command_map = {
+#            guievent.CHANGE_BACKGROUND:
+#                self.resources.change_background,
+#            guievent.ADD_COSTUME:
+#                self.add_costume,
+#            guievent.DEL_COSTUME:
+#                self.del_costume,
+#            guievent.ADD_SHEET:
+#                self.add_sheet,
+#            guievent.DEL_SHEET:
+#                self.del_sheet,
+#            guievent.ADD_IMAGE:
+#                self.resources.null,
+#            guievent.DEL_IMAGE:
+#                self.resources.null,
+#            guievent.ADD_CHARACTER:
+#                self.add_character,
+#            guievent.DEL_CHARACTER:
+#                self.del_character,
+#            guievent.ADD_ANIMATION:
+#                self.resources.null,
+#            guievent.DEL_ANIMATION:
+#                self.resources.null,
+#            guievent.ADD_SPRITE:
+#                self.add_sprite,
+#            guievent.DEL_SPRITE:
+#                self.del_sprite,
+        }
+        self.command_handler = GUICommandHandler(self, command_map)
 
-    def notice_handler(self, event):
-        if event.notice == 'change_background':
-            self.change_background()
-        elif event.notice == 'add_costume':
-            self.add_costume()
-        elif event.notice == 'del_costume':
-            self.del_costume()
-        elif event.notice == 'add_sheet':
-            self.add_sheet()
-        elif event.notice == 'del_sheet':
-            self.del_sheet()
-        elif event.notice == 'add_image':
-            pass
-        elif event.notice == 'del_image':
-            pass
-        elif event.notice == 'add_character':
-            self.add_character()
-        elif event.notice == 'del_character':
-            self.del_character()
-        elif event.notice == 'add_animation':
-            pass
-        elif event.notice == 'del_animation':
-            pass
-        elif event.notice == 'add_sprite':
-            self.add_sprite()
-        elif event.notice == 'del_sprite':
-            self.del_sprite()
-        event.Skip()
+
+    def get_resource(self, resource_type, asset_id, *args, **kwargs):
+        print asset_id
+        core_resource = self.core_resources.get_resource(resource_type, asset_id, *args, **kwargs)
+        gui_resource = super(GUIResources, self).get_resource(resource_type, core_resource, *args, **kwargs)
+        return gui_resource
 
     def change_background(self):
         dlg = dialogs.ChangeBackgroundDialog(self.parent)
@@ -46,203 +71,4 @@ class GUIResources(ResourceManager):
             self.resources.change_default_background(back_type, back_spec)
         dlg.Destroy()
 
-    def add_sheet(self):
-        # definition_fields = Factory_sheet.definition_fields
-        # dialog with definition fields, source file with browse button
-        # resource with same name , overwrite ?
-        filename = dialogs.open_sheet(self.parent)
-        if filename is not None:
-            dia = dialogs.AddSheetDialog(None, -1, "Insert sheet details",
-                                         self.resources)
-            result = dia.ShowModal()
-            if result == wx.ID_OK:
-                self.settings = dia.GetSettings()
-                try:
-                    self.resources.add_resource(
-                        'sheets', self.settings['name'],
-                        {'colorkey': self.settings['colorkey'],
-                         'abs_path': filename})
-                except ValueError as e:
-                    wx.MessageBox(str(e), "Error",
-                                  wx.OK | wx.ICON_INFORMATION)
-            dia.Destroy()
-        return True
 
-    def del_sheet(self):
-        # LISTCTR with very large icons ?
-        # use resources.find_deps
-        # print self.resources.find_deps('sheets', 'master')
-        # name = 'testsheet'
-        # self.resources.remove_resource('sheets', name)
-        # and everything associated to IT!!!
-        dia = dialogs.DelSheetDialog(None, -1, "Delete sheet",
-                                     self.resources)
-        result = dia.ShowModal()
-        if result == wx.ID_OK:
-            self.settings = dia.GetSettings()
-            for x in self.resources.find_deps('sheets',
-                                              self.settings['sheet']):
-                for elem in x:
-                    try:
-                        self.resources.remove_resource(elem[0], elem[1])
-                    except Exception as e:
-                        wx.MessageBox(str(e), "Error", wx.OK |
-                                      wx.ICON_INFORMATION)
-
-            try:
-                self.resources.remove_resource('sheets',
-                                               self.settings['sheet'])
-            except Exception as e:
-                wx.MessageBox(str(e), "Error", wx.OK | wx.ICON_INFORMATION)
-
-        dia.Destroy()
-        return True
-
-    def add_costume(self):
-        # dialog with definitions and a area selection on the sheet
-        dia = dialogs.AddCostumeDialog(None, -1, "Add a new costume",
-                                       self.resources)
-        result = dia.ShowModal()
-        if result == wx.ID_OK:
-            self.settings = dia.GetSettings()
-            # print self.settings['name'], self.settings['rect'], \
-            #    self.settings['sheet']
-            try:
-                self.resources.add_resource(
-                    'costumes', self.settings['name'],
-                    {'name': self.settings['name'],
-                     'sheet': self.settings['sheet'],
-                     'rect': self.settings['rect']})
-            except ValueError as e:
-                wx.MessageBox(str(e), "Error",
-                              wx.OK | wx.ICON_INFORMATION)
-        dia.Destroy()
-        return True
-
-    def del_costume(self):
-        # LISTCTRL with large icons
-        dia = dialogs.DelCostumeDialog(None, -1, "Delete costume",
-                                       self.resources)
-        result = dia.ShowModal()
-        if result == wx.ID_OK:
-            self.settings = dia.GetSettings()
-            for x in self.resources.find_deps('costumes',
-                                              self.settings['costume']):
-                for elem in x:
-                    try:
-                        self.resources.remove_resource(elem[0], elem[1])
-                    except Exception as e:
-                        wx.MessageBox(str(e), "Error", wx.OK |
-                                      wx.ICON_INFORMATION)
-
-            try:
-                self.resources.remove_resource('costumes',
-                                               self.settings['costume'])
-            except Exception as e:
-                wx.MessageBox(str(e), "Error", wx.OK | wx.ICON_INFORMATION)
-
-        dia.Destroy()
-        return True
-
-    def add_sprite(self):
-        # dialog with definition, select from existing costumes,
-        # animations, sounds...
-        # or add empty
-        dia = dialogs.AddSpriteDialog(None, -1, "Add a new sprite",
-                                      self.resources)
-        result = dia.ShowModal()
-        if result == wx.ID_OK:
-            self.settings = dia.GetSettings()
-            try:
-                self.resources.add_resource('sprites', self.settings['name'],
-                                            {'name': self.settings['name'],
-                                             'base_class': self.settings
-                                             ['base_class'],
-                                             'costumes': self.settings
-                                             ['costumes'],
-                                             'animations': [],
-                                             'sounds': [],
-                                             'self_sufficiency': 0,
-                                             'user_code': {'__init__': ''}})
-            except ValueError as e:
-                wx.MessageBox(str(e), "Error",
-                              wx.OK | wx.ICON_INFORMATION)
-
-        dia.Destroy()
-        return True
-
-    def del_sprite(self):
-        # LISTCTRK with name + sprite definition
-        dia = dialogs.DelSpriteDialog(None, -1, "Delete a sprite",
-                                      self.resources)
-        result = dia.ShowModal()
-        if result == wx.ID_OK:
-            self.settings = dia.GetSettings()
-            for x in self.resources.find_deps('sprites',
-                                              self.settings['sprite']):
-                for elem in x:
-                    try:
-                        self.resources.remove_resource(elem[0], elem[1])
-                    except Exception as e:
-                        wx.MessageBox(str(e), "Error", wx.OK |
-                                      wx.ICON_INFORMATION)
-
-            try:
-                self.resources.remove_resource('sprites',
-                                               self.settings['sprite'])
-            except Exception as e:
-                wx.MessageBox(str(e), "Error", wx.OK | wx.ICON_INFORMATION)
-
-        dia.Destroy()
-        return True
-
-    def add_character(self):
-        # dialog with definition, select from existing sprites or add empty
-        dia = dialogs.AddCharacterDialog(None, -1, "Add a new character",
-                                         self.resources)
-        result = dia.ShowModal()
-        if result == wx.ID_OK:
-            self.settings = dia.GetSettings()
-            try:
-                self.resources.add_resource('characters',
-                                            self.settings['name'],
-                                            {'sprites': []})
-            except ValueError as e:
-                wx.MessageBox(str(e), "Error",
-                              wx.OK | wx.ICON_INFORMATION)
-
-        dia.Destroy()
-        return True
-
-    def del_character(self):
-        # LISTCTRK with name + sprite definition
-        dia = dialogs.DelCharacterDialog(None, -1, "Delete character",
-                                         self.resources)
-        result = dia.ShowModal()
-        if result == wx.ID_OK:
-            self.settings = dia.GetSettings()
-            for x in self.resources.find_deps('characters',
-                                              self.settings['character']):
-                for elem in x:
-                    try:
-                        self.resources.remove_resource(elem[0], elem[1])
-                    except Exception as e:
-                        wx.MessageBox(str(e), "Error", wx.OK |
-                                      wx.ICON_INFORMATION)
-
-            try:
-                self.resources.remove_resource('characters',
-                                               self.settings['character'])
-            except Exception as e:
-                wx.MessageBox(str(e), "Error", wx.OK | wx.ICON_INFORMATION)
-
-        dia.Destroy()
-        return True
-
-    def add_animation(self):
-        # dialog similar to add_costume but for every frame
-        pass
-
-    def del_animation(self):
-        # listctrl with animated gifs ?
-        pass

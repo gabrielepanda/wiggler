@@ -1,6 +1,7 @@
 import pygame
 import wx
 
+from wiggler.common.singleton import Singleton
 
 class StageEvents(object):
 
@@ -109,30 +110,61 @@ class StageEvents(object):
 
 
 class Data(object):
+    ''' Generic Empty Data Object'''
     pass
 
 
-class ProjectEvent(wx.PyCommandEvent):
+class GuiCommandEvent(wx.PyCommandEvent):
 
-    def __init__(self, evtType, notice, **data):
+    def __init__(self, evtType, command_type, **data):
         wx.PyCommandEvent.__init__(self, evtType)
-        self.notice = notice
+        self.command_type = command_type
         self.data = Data()
         for key, value in data.items():
             setattr(self.data, key, value)
 
+class Event(object):
 
-class Events(object):
+    def __init__(self):
+        self.counter = 0
+        self.PLAY_GAME = wx.NewId()
+        self.SUFFICIENCY_INCREASE = wx.NewId()
+        self.SUFFICIENCY_DECREASE = wx.NewId()
+        self.LINK_SPRITE_COSTUME = wx.NewId()
+        self.UNLINK_SPRITE_COSTUME = wx.NewId()
+        self.LINK_CHARACTER_SPRITE = wx.NewId()
+        self.UNLINK_CHARACTER_SPRITE = wx.NewId()
+        self.LINK_CAST_CHARACTER = wx.NewId()
+        self.UNLINK_CAST_CHARACTER = wx.NewId()
+        self.ADD_COSTUME = wx.NewId()
+        self.DEL_COSTUME = wx.NewId()
+        self.ADD_SHEET = wx.NewId()
+        self.DEL_SHEET = wx.NewId()
+        self.ADD_IMAGE = wx.NewId()
+        self.DEL_IMAGE = wx.NewId()
+        self.ADD_CHARACTER = wx.NewId()
+        self.DEL_CHARACTER = wx.NewId()
+        self.ADD_ANIMATION = wx.NewId()
+        self.DEL_ANIMATION = wx.NewId()
+        self.ADD_SPRITE = wx.NewId()
+        self.DEL_SPRITE = wx.NewId()
+        self.CHANGE_BACKGROUND = wx.NewId()
+        #self. = self.add_event()
+
+guievent = Event()
+
+class EventQueue(object):
+    __metaclass__ = Singleton
 
     def __init__(self):
         self.EVT_TYPE_NOTICE = wx.NewEventType()
         self.EVT_NOTICE = wx.PyEventBinder(self.EVT_TYPE_NOTICE, 1)
         self.subscribers = {}
 
-    def send(self, notice, **data):
-        event = ProjectEvent(self.EVT_TYPE_NOTICE, notice, **data)
+    def broadcast(self, command_type, **data):
+        event = GuiCommandEvent(self.EVT_TYPE_NOTICE, command_type, **data)
         try:
-            for window in self.subscribers[notice]:
+            for window in self.subscribers[command_type]:
                 wx.PostEvent(window.GetEventHandler(), event)
         except KeyError:
             pass
@@ -142,3 +174,23 @@ class Events(object):
             if command not in self.subscribers.keys():
                 self.subscribers[command] = []
             self.subscribers[command].append(window)
+
+
+class GUICommandHandler(object):
+
+    def __init__(self, window, command_map):
+        self.window = window
+        self._command_map = {}
+        if command_map is not None:
+            self._command_map = command_map
+        self.event_queue = EventQueue()
+        subscriptions = self._command_map.keys()
+        self.event_queue.subscribe(self.window, subscriptions)
+        self.window.Bind(self.event_queue.EVT_NOTICE, self.service)
+
+    def service(self, event):
+        callback = self._command_map[event.command_type]
+
+        callback(event)
+        event.Skip()
+
