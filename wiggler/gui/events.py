@@ -149,6 +149,7 @@ class Event(object):
         self.ADD_SPRITE = wx.NewId()
         self.DEL_SPRITE = wx.NewId()
         self.CHANGE_BACKGROUND = wx.NewId()
+        self.SPRITE_SELECTED = wx.NewId()
         #self. = self.add_event()
 
 guievent = Event()

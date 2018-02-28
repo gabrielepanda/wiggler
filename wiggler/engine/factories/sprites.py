@@ -2,6 +2,7 @@ from wiggler.engine.sets import CostumesSet, AnimationsSet, SoundsSet
 from wiggler.core.code_handler import CodeHandler
 
 
+
 class SpriteBuilder(object):
 
     def __init__(self, resources, name, definition, **params):

@@ -1,16 +1,30 @@
 import wx
 
 from wiggler.gui.editor import TextEditor
+from wiggler.gui.events import guievent, GUICommandHandler
+from wiggler.gui.resources.manager import GUIResources
+
+
+class CodePanePage(TextEditor):
+
+    def __init__(self, parent, readonly=False):
+        super(CodePanePage, self).__init__(parent, wx.ID_ANY,
+                                           readonly=readonly)
+
 
 
 class CodePane(wx.Notebook):
 
-    def __init__(self, parent, resources, events):
+    def __init__(self, parent):
         wx.Notebook.__init__(self, parent)
         self._buffers = {}
-        self.events = events
-        self.resources = resources
+        self.events = GUICommandHandler()
+        self.resources = GUIResources()
         self.active_sprite = None
+        command_map = {
+            guievent.SPRITESELECTED:
+                self.set_sprite_code_buffers
+        }
         self.events.subscribe(
             self, ['reload', 'actsprite', 'preplay', 'projload', 'traceback',
                    'selfsuff_change'])
@@ -34,7 +48,7 @@ class CodePane(wx.Notebook):
                 self.handle_traceback(event.data.code_handler)
         event.Skip()
 
-    def set(self, buffer_name, text, readonly=False):
+    def set_page(self, buffer_name, text, readonly=False):
         if buffer_name not in self._buffers:
             editor = TextEditor(self, wx.ID_ANY, readonly=readonly)
             self._buffers[buffer_name] = editor

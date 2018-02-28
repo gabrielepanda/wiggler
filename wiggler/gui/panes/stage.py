@@ -3,8 +3,8 @@ import pygame
 import sys
 import wx
 
-from wiggler.gui.events import StageEvents
-from wiggler.engine.stage import Stage
+from wiggler.gui.events import StageEvents, EventQueue
+#from wiggler.engine.stage import Stage
 
 tilemap = dict()
 
@@ -16,9 +16,8 @@ class StagePane(wx.Control):
         return
         wx.Control.__init__(*(self, parent, id), **options)
         self.parent = parent
-        self.resources = resources
         self.stage = Stage(self.resources)
-        self.events = events
+        self.events = EventQueue()
 
         self._initialized = 0
         self._resized = 0

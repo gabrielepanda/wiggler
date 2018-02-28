@@ -1,11 +1,12 @@
 import pygame
 
-class SoundChannels(object):
+class SoundMixer(object):
 
     def __init__(self, num_channels, reserved):
         pygame.mixer.stop()
         pygame.mixer.set_num_channels(num_channels)
         pygame.mixer.set_reserved(reserved)
+        self.sounds = SoundSet()
         self.channels = dict()
 
     def loop_play(self, sound):
@@ -40,3 +41,10 @@ class Sound(object):
 
     def single_play(self):
         self.channels.single_play(self.content)
+
+    def play(self, loop=False):
+        if loop:
+            self.loop_play()
+        else:
+            self.single_play()
+

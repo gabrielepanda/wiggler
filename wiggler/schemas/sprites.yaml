@@ -17,6 +17,8 @@ schema:
         - animation_id
     sounds:
         - sound_id
-    scripts:
-        - script_id
+    code:
+        level: 0
+        scripts:
+            - script_id
 

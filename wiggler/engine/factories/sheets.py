@@ -116,3 +116,11 @@ class Animation(object):
                 except IndexError:
                     pass
             yield frame
+
+    def play(self):
+        frame = self.frame_generator()
+        try:
+            next(frame)
+            return True
+        except StopIteration:
+            return False

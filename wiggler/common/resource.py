@@ -32,6 +32,10 @@ class Resource(object):
 
         return data
 
+    def dump(self, library_name):
+        self.global_catalog.replace
+
+
     def clone_and_write_instance(self, library):
         ''' will save modifications to the instance on
         the asset then change own asset_id to that'''
