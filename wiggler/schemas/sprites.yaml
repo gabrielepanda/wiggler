@@ -4,7 +4,7 @@ soft_deps:
     - costumes
     - sounds
     - animations
-    - scripts
+    - code
 schema:
     id: uuid
     name: string
@@ -17,8 +17,6 @@ schema:
         - animation_id
     sounds:
         - sound_id
-    code:
-        level: 0
-        scripts:
-            - script_id
+    code: code_id
+    sufficiency: suff_id
 

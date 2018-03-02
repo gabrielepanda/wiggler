@@ -1,0 +1,5 @@
+name: snippets
+meta_only: false
+schema:
+    id: uuid
+    data_file: file.txt

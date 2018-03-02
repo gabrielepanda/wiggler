@@ -56,11 +56,10 @@ class GUIResources(ResourceManager, wx.Control):
         self.command_handler = GUICommandHandler(self, command_map)
 
 
-    def get_resource(self, resource_type, asset_id, *args, **kwargs):
-        print asset_id
-        core_resource = self.core_resources.get_resource(resource_type, asset_id, *args, **kwargs)
-        gui_resource = super(GUIResources, self).get_resource(resource_type, core_resource, *args, **kwargs)
-        return gui_resource
+#    def get_resource(self, resource_type, asset_id, *args, **kwargs):
+#        core_resource = self.core_resources.get_resource(resource_type, asset_id, *args, **kwargs)
+#        gui_resource = super(GUIResources, self).get_resource(resource_type, core_resource, *args, **kwargs)
+#        return gui_resource
 
     def change_background(self):
         dlg = dialogs.ChangeBackgroundDialog(self.parent)

@@ -1,0 +1,7 @@
+name: codes
+meta_only: true
+schema:
+    id: uuid
+    sections:
+        section_name: snippet_id
+        section_name: snippet_id

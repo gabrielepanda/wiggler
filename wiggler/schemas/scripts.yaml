@@ -1,7 +1,0 @@
-name: scripts
-meta_only: false
-schema:
-    id: uuid
-    name: name
-    text: |
-        text

@@ -1,11 +1,14 @@
 import wx
 
+from wiggler.core.resources.images import Image as CoreImage
 
-class Image(object):
 
-    def __init__(self, core_image, scaleTo=None):
-        self._core_image = core_image
-        self.bitmap = wx.Bitmap(self._core_image._data_filepath)
+class Image(CoreImage):
+
+    def __init__(self, asset_id, scaleTo=None):
+        super(Image, self).__init__(asset_id)
+
+        self.bitmap = wx.Bitmap(self._data_filepath)
 
     def get_bitmap(self, scale=None):
         if scale is None:

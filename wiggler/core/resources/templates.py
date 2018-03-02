@@ -1,13 +1,16 @@
 import jinja2
 import os
 
+from wiggler.common.resource import Resource
 
-class Template(object):
 
-    def __init__(self, name, resources, definition, **params):
-        self.resources = resources
-        self.name = name
-        path, filename = os.path.split(definition['abs_path'])
+class Template(Resource):
+
+    def __init__(self, asset_id):
+        super(Template, self).__init__('template', asset_id)
+
+        path = os.path.dirname(self._data_filepath)
+        filename = os.path.basename(self._data_filepath)
         self.env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(path))
         self.template = self.env.get_template(filename)

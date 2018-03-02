@@ -18,17 +18,17 @@ class CodePane(wx.Notebook):
     def __init__(self, parent):
         wx.Notebook.__init__(self, parent)
         self._buffers = {}
-        self.events = GUICommandHandler()
         self.resources = GUIResources()
         self.active_sprite = None
         command_map = {
-            guievent.SPRITESELECTED:
+            guievent.SPRITE_SELECTED:
                 self.set_sprite_code_buffers
         }
-        self.events.subscribe(
-            self, ['reload', 'actsprite', 'preplay', 'projload', 'traceback',
-                   'selfsuff_change'])
-        self.Bind(self.events.EVT_NOTICE, self.notice_handler)
+#        self.events.subscribe(
+#            self, ['reload', 'actsprite', 'preplay', 'projload', 'traceback',
+#                   'selfsuff_change'])
+#        self.Bind(self.events.EVT_NOTICE, self.notice_handler)
+        self.events = GUICommandHandler(self, command_map)
 
     def notice_handler(self, event):
         if event.notice == 'reload':

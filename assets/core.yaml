@@ -8,8 +8,10 @@ assets:
     images:
         meta_file: images.yaml
         data_dir: images
-    scripts:
-        meta_file: scripts.yaml
-        data_dir: scripts
+    snuppets:
+        meta_file: snippets.yaml
+        data_dir: snippets
     sprites:
         meta_file: sprites.yaml
+    code:
+        meta_file: code.yaml
