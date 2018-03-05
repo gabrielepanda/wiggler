@@ -1,12 +1,14 @@
 name: projects
 meta_only: true
 soft_deps:
-    - casts
+    - characters
     - images
 schema:
     id: uuid
     name: string
-    cast: cast_id
+    characters:
+        - character_id
+        - character_id
     background:
         type: solid
         color: 255, 255, 255

@@ -1,40 +1,22 @@
 from wiggler.common.resource import Resource
+from wiggler.core.resources.templates import Template
 
 class SelfSufficiency(Resource):
 
     def __init__(self, asset_id):
         super(SelfSufficiency, self).__init__('self_sufficiency', asset_id)
 
-        self.element = self._meta['element']
-        buffers = self._meta['buffers']
-        self.max_level = len(buffers)
-
-        self.level = initial_level
-        self.templates = {}
-        self.update_templates_elements()
-        self.buffers_lists = {}
-        for template_name, template_def in self.resources.templates.items():
-            template = self.resources.load_resource('templates', template_name)
-            element = template_def['element']
-            level = template_def['level']
-            self.templates[element][level] = template
-        self.buffers_lists['sprite'] = sprites_buffers_lists
-        self.buffers_lists['controller'] = controller_buffers_lists
-
-
-        self.buffers = meta['buffers']
-        self.scripts_list = meta['scripts']
-        buffername_script_pairs = zip(self.buffernames_list, self.scripts_list)
-        self.scripts.update(buffername_script_pairs)
-        for buffer_name in self.buffernames_list:
-            if buffer_name not in self.scripts:
-                self.scripts[buffer_name] = ""
-        self.user_code = {}
-
-    def update_templates_elements(self):
-        self.templates = {}
-        for element in self.elements[self.level]:
-            self.templates[element] = {}
+        self.levels = []
+        levels = self._meta['levels']
+        for level_meta in levels:
+            level = {}
+            template_list = level_meta['templates']
+            for template_meta in template_list:
+                for template_id, meta in template_meta:
+                    template = Template(template_id)
+                    template.set_section_options(meta['sections'])
+                    level['templates'][template.element_name] = template
+            self.levels.append(level)
 
     # GUI
     def increase_level(self):

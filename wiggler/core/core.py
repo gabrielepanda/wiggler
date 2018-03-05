@@ -1,12 +1,13 @@
 from wiggler.core.resources.manager import CoreResources
 
 
-class Core(object):
+class CoreOperations(object):
 
     def __init__(self):
         #self.load_conf()
         #self.resman = CoreResources(self.conf)
-        self.resman = CoreResources()
+        self.resources = CoreResources()
+        print "NEW PROJECT"
         self.project = self.resman.new_resource('project')
 
     def load_conf(self):

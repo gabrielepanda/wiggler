@@ -1,21 +1,37 @@
+import wx
 
-def open_project(parent):
-    open_file = wx.FileDialog(parent, "Open wiggler project", "", "",
-                              "wig files (*.wig)|*.wig",
-                              wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
-    if open_file.ShowModal() == wx.ID_CANCEL:
-        return None
-    return open_file.GetPath()
+from wiggler.core.resources.projects import Project as CoreProject
+
+class Project(CoreProject):
+
+    def __init__(self, asset_id):
+        super(Project, self).__init__(asset_id)
+
+    def open_project(parent):
+        open_file = wx.FileDialog(parent, "Open wiggler project", "", "",
+                                "wig files (*.wig)|*.wig",
+                                wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        if open_file.ShowModal() == wx.ID_CANCEL:
+            return None
+        return open_file.GetPath()
 
 
-def save_project(parent):
-    save_file = wx.FileDialog(parent, "Save wiggler project", "", "",
-                              "wig files (*.wig)|*.wig",
-                              wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
-    if save_file.ShowModal() == wx.ID_CANCEL:
-        return None
-    return save_file.GetPath()
+    def save_project(parent):
+        save_file = wx.FileDialog(parent, "Save wiggler project", "", "",
+                                "wig files (*.wig)|*.wig",
+                                wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+        if save_file.ShowModal() == wx.ID_CANCEL:
+            return None
+        return save_file.GetPath()
 
+    def set_active_character(self, name=None, index=None):
+        if name is not None:
+            for index in self.indexes:
+                if self.indexes[index] == self.characters[name]:
+                    break
+        if index is not None:
+            self.active_character = index
+        return self.indexes[index]
 
 class ChangeBackgroundDialog(wx.Dialog):
 

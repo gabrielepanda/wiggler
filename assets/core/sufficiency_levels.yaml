@@ -11,38 +11,20 @@
 
 ---
 id: 6bb22f0b-76b8-418d-8e8d-f7a8bae10c9f
-element: sprite
-template: template_id
-sections:
-    __init__:
-       deloopify: false
----
-id: d3fa7805-b734-4985-b373-bda62d55f644
-elements: sprite
-template: template_id
-sections:
-    __init__:
-       deloopify: false
-    custom_update:
-       delooify: true
----
-element: controller
-level: 0
-  customer_update:
-      deloopify: true
----
-element: controller
-level: 1
-custom_update:
-    deloopify: true
-
-    #sprites_buffers_lists = [
-    #    level_0,
-    #    level_1,
-    #]
-
-    #controller_buffers_lists = [
-    #    controller_level_0,
-    #    controller_level_1
-    #]
-
+levels:
+    - templates:
+        - df189b1d-108f-4287-8f7f-83057046ee0c:
+            sections:
+                __init__:
+                    deloopify: false
+        - 60c4b087-357e-4bfc-8827-5efe79bd9e2c:
+            sections: null
+    - templates:
+        - 63b8d8d6-d813-4a3a-b29a-a11992b090da:
+            sections:
+                __init__:
+                    deloopify: false
+                custom_update:
+                    deloopify: true
+        - f62da82c-075f-4136-91cc-3186ccb944b4:
+            sections: null

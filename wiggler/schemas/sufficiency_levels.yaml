@@ -1,8 +1,5 @@
 name: sufficiency_levels
 meta_only: true
-levels:
-    - 6bb22f0b-76b8-418d-8e8d-f7a8bae10c9f
-    - d3fa7805-b734-4985-b373-bda62d55f644
 schema:
     id: uuid
     name: string

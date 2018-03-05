@@ -5,19 +5,20 @@ import wiggler.gui.dialogs as dialogs
 
 class CharactersPane(wx.ListCtrl):
 
-    def __init__(self, parent, resources, events):
+    def __init__(self, parent):
         wx.ListCtrl.__init__(self, parent, style=wx.LC_ICON)
         self.events = events
         self.resources = resources
         self.il = wx.ImageList(30, 30, True)
         self.AssignImageList(self.il, wx.IMAGE_LIST_NORMAL)
-        self.events.subscribe(self, ['projload', 'load_character',
-                                     'add_sprite_costume',
-                                     'del_sprite_costume',
-                                     'add_char_sprite',
-                                     'del_char_sprite',
-                                     'add_char_proj',
-                                     'del_char_proj'])
+        command_map = {}
+        #self.events.subscribe(self, ['projload', 'load_character',
+        #                             'add_sprite_costume',
+        #                             'del_sprite_costume',
+        #                             'add_char_sprite',
+        #                             'del_char_sprite',
+        #                             'add_char_proj',
+        #                             'del_char_proj'])
         self.Bind(self.events.EVT_NOTICE, self.notice_handler)
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.list_select)
 

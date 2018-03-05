@@ -11,16 +11,17 @@ class Resource(object):
         # if asset_id is 0 this means the resource is new
         # and doesn't need to be loaded
         if asset_id == 0:
+            # generate_new_meta is implemented only in subclass
             meta = self.generate_new_meta()
             asset_id =  str(uuid.uuid4())
             meta['id'] = asset_id
             self.global_catalog.create_asset(self.resource_type, meta)
+
         self._meta = self.global_catalog.get_asset_by_id(asset_id)
         if 'data_file' in self._meta:
             data_filename = self._meta['data_file']
             data_dir = self.global_catalog.get_datadir_by_id(asset_id)
             self._data_filepath = os.path.join(data_dir, data_filename)
-            print self._data_filepath
         self.asset_id = asset_id
         self._asset_path = None
         self.dependencies = None

@@ -2,13 +2,15 @@ id: 34796a4a-0eb4-4109-8780-44fa698508cf
 assets_type: core
 assets_dir: core
 assets:
+    characters:
+        meta_file: characters.yaml
     templates:
         meta_file: templates.yaml
         data_dir: templates
     images:
         meta_file: images.yaml
         data_dir: images
-    snuppets:
+    snippets:
         meta_file: snippets.yaml
         data_dir: snippets
     sprites:

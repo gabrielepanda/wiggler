@@ -3,10 +3,10 @@ import sys
 import traceback
 import wx
 
+from wiggler.common.configuration import Configuration
 from wiggler.gui.events import EventQueue
 from wiggler.gui.resources.manager import GUIResources
 from wiggler.gui.root import RootWindow
-from wiggler.core.core import Core
 
 class Wiggler(wx.App):
 
@@ -15,13 +15,15 @@ class Wiggler(wx.App):
         #sys.excepthook = self.except_hook
 
     def OnInit(self):
-        self.core = Core()
         #self.engine = Engine(self.conf)
+        self.conf = Configuration()
         self.events = EventQueue()
-        frame = RootWindow(self.core, self.events)
-        frame.Show(True)
-        self.SetTopWindow(frame)
-        self.events.broadcast('projload')
+        root_frame = RootWindow()
+        resources = GUIResources(root_frame)
+        root_frame.setup()
+        root_frame.Show(True)
+        self.SetTopWindow(root_frame)
+        resources.new_project()
         return True
 
     def except_hook(self, exc_type, exc_value, tb):

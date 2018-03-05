@@ -1,8 +1,4 @@
-import wx
-
-from wiggler.gui.events import GUICommandHandler
-from wiggler.gui.operations import guiop, Operations
-from wiggler.gui.resources.manager import GUIResources
+from wiggler.gui.resources.manager import guiop, GUIResources
 
 class ToolBar(object):
 
@@ -10,7 +6,7 @@ class ToolBar(object):
         self.parent = parent
         self.width = 30
         self.height = 30
-        self.resources = GUIResources(parent)
+        self.resources = GUIResources()
         self.tools = parent.CreateToolBar()
         buttons = [
             ('f3006821-3470-452f-967b-8a0cd9b88039',
@@ -36,7 +32,7 @@ class ToolBar(object):
             image_asset_id, label_text, guiop_id = button
             image = self.resources.get_resource('image', image_asset_id)
             bitmap = image.get_bitmap(scale=(self.width, self.height))
-            tool = self.tools.AddLabelTool(guiop_id, label_text, bitmap)
+            self.tools.AddLabelTool(guiop_id, label_text, bitmap)
 
 
         self.tools.Realize()

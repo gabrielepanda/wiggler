@@ -151,9 +151,6 @@ class AssetCatalog(object):
                                         "assets")
         self.scan_library('project', project_library_path)
 
-
-
-
     def scan_library(self, library_name, base_dir):
         #self._catalog.add_library(name)
         self._catalog.libraries[library_name] = {}
@@ -183,7 +180,7 @@ class AssetCatalog(object):
         pass
 
     # saves asset from project resource
-    def save_asset(self, target_library, asset_id  ):
+    def save_asset(self, target_library, asset_id):
         if target_library == 'project':
             self._catalog.save_asset( target_library )
         elif target_library == 'user':

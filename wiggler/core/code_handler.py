@@ -7,6 +7,9 @@ import traceback
 START = 0
 END = 1
 
+If code has errors, do not generate
+
+
 
 class CodeSection(object):
 
