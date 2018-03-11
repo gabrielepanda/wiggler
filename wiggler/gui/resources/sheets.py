@@ -1,4 +1,19 @@
+import wx
+
 from wiggler.gui.dialogs import Selection
+from wiggler.core.resources.sheets import Sheet as CoreSheet
+
+
+class Sheet(CoreSheet):
+
+    def __init__(self, meta, **kwargs):
+        super(Sheet, self).__init__(meta, **kwargs)
+        self.bitmap = wx.Bitmap(self._data_filepath)
+        color = wx.Colour()
+        print self.color_key
+        color.Set(*self.color_key)
+        self.bitmap.SetMaskColour(color)
+
 
 class SelectSheet(Selection):
 

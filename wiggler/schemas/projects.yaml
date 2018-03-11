@@ -1,14 +1,13 @@
-name: projects
+name: project
 meta_only: true
 soft_deps:
     - characters
     - images
 schema:
-    id: uuid
-    name: string
-    characters:
-        - character_id
-        - character_id
+    name: ""
+    # list of character ids
+    characters: []
     background:
         type: solid
-        color: 255, 255, 255
+        # Converted to tuple
+        color: "255, 255, 255"

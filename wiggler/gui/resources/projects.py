@@ -4,8 +4,8 @@ from wiggler.core.resources.projects import Project as CoreProject
 
 class Project(CoreProject):
 
-    def __init__(self, asset_id):
-        super(Project, self).__init__(asset_id)
+    def __init__(self, meta, **kwargs):
+        super(Project, self).__init__(meta, **kwargs)
 
     def open_project(parent):
         open_file = wx.FileDialog(parent, "Open wiggler project", "", "",

@@ -77,7 +77,7 @@ class RootWindow(wx.Frame):
         sizer.Add(self.basket_functions, (1, 1), span=(1, 1), flag=wx.EXPAND)
         #sizer.Add(self.costumes_pane, (0, 2), span=(2, 1), flag=wx.EXPAND)
         sizer.Add(self.code_pane, (0, 3), span=(2, 1), flag=wx.EXPAND)
-        #sizer.Add(self.characters_pane, (1, 0), flag=wx.EXPAND)
+        sizer.Add(self.characters_pane, (1, 0), flag=wx.EXPAND)
         #sizer.Add(self.traceback, (2, 0), span=(1, 4), flag=wx.EXPAND)
         sizer.Fit(self)
         #sizer.AddGrowableCol(3)

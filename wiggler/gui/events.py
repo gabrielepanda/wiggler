@@ -126,7 +126,14 @@ class GuiCommandEvent(wx.PyCommandEvent):
 class Event(object):
 
     def __init__(self):
-        self.counter = 0
+        self.binders = {}
+
+        self.GUI_READY = wx.NewId()
+        self.CHARACTER_RESOURCE_LOADED = wx.NewId()
+        self.TEST_EVENT = self.new_event()
+
+
+        # TO FIX
         self.PLAY_GAME = wx.NewId()
         self.SUFFICIENCY_INCREASE = wx.NewId()
         self.SUFFICIENCY_DECREASE = wx.NewId()
@@ -150,7 +157,11 @@ class Event(object):
         self.DEL_SPRITE = wx.NewId()
         self.CHANGE_BACKGROUND = wx.NewId()
         self.SPRITE_SELECTED = wx.NewId()
-        #self. = self.add_event()
+
+    def new_event(self):
+        event_type = wx.NewEventType()
+        self.binders[event_type] = wx.PyEventBinder(event_type, 1)
+        return event_type
 
 guievent = Event()
 
@@ -162,6 +173,7 @@ class EventQueue(object):
         self.EVT_NOTICE = wx.PyEventBinder(self.EVT_TYPE_NOTICE, 1)
         self.subscribers = {}
 
+    # FIXME: Broadcast to send events to root, remove subscribe
     def broadcast(self, command_type, **data):
         event = GuiCommandEvent(self.EVT_TYPE_NOTICE, command_type, **data)
         try:

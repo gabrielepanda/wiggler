@@ -2,6 +2,6 @@ name: sheets
 meta_only: false
 # for reference only
 schema:
-    id:
+    # Converted to tuple
     color_key: color tuple
     data_file: filename

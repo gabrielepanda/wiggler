@@ -1,7 +1,20 @@
 import wx
+from wiggler.core.resources.characters import Character as CoreCharacter
 
-class Character(object):
-    pass
+class Character(CoreCharacter):
+
+    def __init__(self, meta, **kwargs):
+        self.active_sprite = None
+        super(Character, self).__init__(meta, **kwargs)
+
+    def add_sprite(self, asset_id):
+        super(Character, self).add_sprite(asset_id)
+        self.active_sprite = self.sprites[asset_id]
+
+#    def set_active_sprite(self, spriteindex):
+#        if spriteindex is not None:
+#            self.active_sprite = spriteindex
+
 
 class SelectCharacter(wx.ListCtrl):
 

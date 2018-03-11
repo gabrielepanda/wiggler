@@ -17,4 +17,5 @@ class CoreResources(ResourceManager):
         self.project = None
 
     def new_project(self):
+        self._asset_catalog.change_project_library(None)
         self.project = self.new_resource('project')

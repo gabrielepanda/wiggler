@@ -4,7 +4,7 @@ import traceback
 import wx
 
 from wiggler.common.configuration import Configuration
-from wiggler.gui.events import EventQueue
+from wiggler.gui.events import guievent, EventQueue
 from wiggler.gui.resources.manager import GUIResources
 from wiggler.gui.root import RootWindow
 
@@ -19,11 +19,11 @@ class Wiggler(wx.App):
         self.conf = Configuration()
         self.events = EventQueue()
         root_frame = RootWindow()
-        resources = GUIResources(root_frame)
+        self.resources = GUIResources(root_frame)
         root_frame.setup()
         root_frame.Show(True)
         self.SetTopWindow(root_frame)
-        resources.new_project()
+        self.events.broadcast(guievent.GUI_READY)
         return True
 
     def except_hook(self, exc_type, exc_value, tb):

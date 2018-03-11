@@ -5,8 +5,8 @@ from wiggler.core.resources.images import Image as CoreImage
 
 class Image(CoreImage):
 
-    def __init__(self, asset_id, scaleTo=None):
-        super(Image, self).__init__(asset_id)
+    def __init__(self, meta, scaleTo=None, **kwargs):
+        super(Image, self).__init__(meta, **kwargs)
 
         self.bitmap = wx.Bitmap(self._data_filepath)
 

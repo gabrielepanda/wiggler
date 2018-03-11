@@ -1,9 +1,14 @@
 import wx
 
-class Sprite(object):
+from wiggler.core.resources.sprites import Sprite as CoreSprite
 
-    def __init__(self, core_resource):
-        pass
+class Sprite(CoreSprite):
+
+    def __init__(self, meta, **kwargs):
+        super(Sprite, self).__init__(meta, **kwargs)
+        # gui
+        #code_id = self._meta['code']
+        #self.code = self._manager.get_resource('code', code_id)
 
     def add(self):
         pass

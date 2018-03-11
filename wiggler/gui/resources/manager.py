@@ -8,6 +8,8 @@ from wiggler.gui.resources.sprites import Sprite
 from wiggler.gui.resources.characters import Character
 from wiggler.gui.resources.images import Image
 from wiggler.gui.resources.projects import Project
+from wiggler.gui.resources.costumes import Costume
+from wiggler.gui.resources.sheets import Sheet
 #from wiggler.gui.resources. import
 
 class OperationIDs(object):
@@ -46,9 +48,15 @@ class GUIResources(CoreResources, wx.Control):
             "sprite": Sprite,
             "project": Project,
             "character": Character,
+            "costume": Costume,
+            "sheet": Sheet,
         }
         self.events = EventQueue()
-        command_map = {
+        event_map = {
+            guievent.GUI_READY:
+                self.test_project,
+#            guiop.PROJECT_LOADED:
+#                self.load_all_resources
 #            guievent.CHANGE_BACKGROUND:
 #                self.resources.change_background,
 #            guievent.ADD_COSTUME:
@@ -76,7 +84,7 @@ class GUIResources(CoreResources, wx.Control):
 #            guievent.DEL_SPRITE:
 #                self.del_sprite,
         }
-        self.command_handler = GUICommandHandler(self, command_map)
+        self.command_handler = GUICommandHandler(self, event_map)
 
 
 #    def get_resource(self, resource_type, asset_id, *args, **kwargs):
@@ -87,8 +95,15 @@ class GUIResources(CoreResources, wx.Control):
     def set_root_frame(self, root_frame):
         self.root_frame = root_frame
 
-    def new_project(self):
-        self.project = self.new_resource('project')
+    def test_project(self, event):
+        self.new_project(event)
+        character = self.get_resource('character', "6e5edb1f-6afa-437e-b3c1-a96cc5f5c7be")
+        data = {}
+        data['asset_id'] = "6e5edb1f-6afa-437e-b3c1-a96cc5f5c7be"
+        self.events.broadcast(guievent.CHARACTER_RESOURCE_LOADED, **data)
+
+    def new_project(self, event):
+        super(GUIResources, self).new_project()
 
     def change_background(self):
         dlg = dialogs.ChangeBackgroundDialog(self.parent)
@@ -100,8 +115,9 @@ class GUIResources(CoreResources, wx.Control):
         dlg.Destroy()
 
     def event_handler(self, event):
-        print guiop.ADD_SPRITE
-        print event.GetId()
+        pass
+        #print guiop.ADD_SPRITE
+        #print event.GetId()
 
     def notice_dispatcher(self, event):
         menu_id = event.GetId()

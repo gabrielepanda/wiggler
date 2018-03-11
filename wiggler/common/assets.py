@@ -1,5 +1,7 @@
 import os
+import uuid
 import yaml
+import pprint
 
 from wiggler.common.colorlog import log
 from wiggler.common.singleton import Singleton
@@ -27,28 +29,6 @@ class Catalog(object):
         self.trees = {}
         self.libraries = {}
 
-        # trivial self.trees_by_id = {}
-    def get_library_tree_ids(self, library_name):
-        tree_ids = self.libraries[library_name]['trees']
-        return tree_ids
-
-        self.trees_by_asset_id = {}
-        def get_trees_from_asset_id(self, asset_id):
-            trees = set()
-            for asset_record in self.assets_paths.values():
-                trees.add(asset_record.tree_id)
-
-            return trees
-
-        self.assets_by_tree = {}
-        def get_assets_by_tree_id(self, tree_id):
-            assets = []
-            for asset_record in self.assets_paths.values():
-                if asset_record.tree_id == tree_id:
-                    assets.append(asset_record.asset_meta)
-
-            return assets
-
         self.assets_by_library = {}
 
         # trivial self.assets_ids = [] catalog.keys
@@ -61,6 +41,28 @@ class Catalog(object):
         self.assets_by_id_by_tree = {}
         self.type_by_id = {}
         self.ids_by_type = {}
+        # trivial self.trees_by_id = {}
+        self.trees_by_asset_id = {}
+        self.assets_by_tree = {}
+
+    def get_library_tree_ids(self, library_name):
+        tree_ids = self.libraries[library_name]['trees']
+        return tree_ids
+
+    def get_trees_from_asset_id(self, asset_id):
+        trees = set()
+        for asset_record in self.assets_paths.values():
+            trees.add(asset_record.tree_id)
+
+        return trees
+
+    def get_assets_by_tree_id(self, tree_id):
+        assets = []
+        for asset_record in self.assets_paths.values():
+            if asset_record.tree_id == tree_id:
+                assets.append(asset_record.asset_meta)
+
+        return assets
 
     def add_asset(self, library, tree_id, asset_type, asset_meta):
         asset_id = asset_meta['id']
@@ -123,11 +125,10 @@ class Catalog(object):
 class AssetCatalog(object):
     __metaclass__ = Singleton
 
-    def __init__(self, project_file=None):
+    def __init__(self):
         self._catalog = Catalog()
         self.paths = Paths()
         self._asset_types = {}
-        self.projectlibrary = ProjectLibrary(project_file)
 
         schemas = os.listdir(self.paths.schemas_base)
         for asset_type_filename in schemas:
@@ -147,6 +148,9 @@ class AssetCatalog(object):
         if self.paths.userlib_base is not None:
             self.scan_library('user',self.paths.userlib_base)
 
+    def change_project_library(self, project_file):
+        #self.remove_project_library_assets()
+        self.projectlibrary = ProjectLibrary(project_file)
         project_library_path = os.path.join(self.projectlibrary._render_dir,
                                         "assets")
         self.scan_library('project', project_library_path)
@@ -170,10 +174,14 @@ class AssetCatalog(object):
                                    assets_conf_filepath)
             self._catalog.trees[asset_tree.tree_id] = asset_tree
 
-    def create_asset(self, asset_type, asset_meta):
+    def new_asset(self, asset_type):
+        asset_meta = self._asset_types[asset_type]['schema']
+        asset_meta['id'] = str(uuid.uuid4())
         tree_id = self._catalog.get_library_tree_ids('project')[0]
         project_tree = self._catalog.trees[tree_id]
         project_tree.save_asset(asset_type, asset_meta)
+
+        return asset_meta['id']
 
     def clone_asset(self):
         """ copy assett from disk to disk, generating new id"""
@@ -242,7 +250,7 @@ class AssetCatalog(object):
 
         return assets
 
-class AssetTree():
+class AssetTree(object):
 
     def __init__(self, library, types_conf, global_catalog,
                  base_dir, conf_filename):
@@ -252,6 +260,7 @@ class AssetTree():
         self.conf_filename = conf_filename
         with open(conf_filename, "r") as conf_file:
             conf = yaml.safe_load(conf_file)
+        print conf
         self.tree_id = conf['id']
         self.global_catalog.libraries[library]['trees'].append(self.tree_id)
         self.base_dir = os.path.join(base_dir, conf['assets_dir'])

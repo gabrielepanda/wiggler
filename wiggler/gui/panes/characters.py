@@ -1,17 +1,23 @@
 import wx
 
 import wiggler.gui.dialogs as dialogs
-
+from wiggler.gui.events import guievent, GUICommandHandler
+from wiggler.gui.resources.manager import GUIResources
 
 class CharactersPane(wx.ListCtrl):
 
     def __init__(self, parent):
         wx.ListCtrl.__init__(self, parent, style=wx.LC_ICON)
-        self.events = events
-        self.resources = resources
+        self.resources = GUIResources()
         self.il = wx.ImageList(30, 30, True)
         self.AssignImageList(self.il, wx.IMAGE_LIST_NORMAL)
-        command_map = {}
+        command_map = {
+            guievent.CHARACTER_RESOURCE_LOADED:
+                self.load_character
+#                self.resources_loaded()
+
+        }
+        self.command_handler = GUICommandHandler(self, command_map)
         #self.events.subscribe(self, ['projload', 'load_character',
         #                             'add_sprite_costume',
         #                             'del_sprite_costume',
@@ -19,13 +25,15 @@ class CharactersPane(wx.ListCtrl):
         #                             'del_char_sprite',
         #                             'add_char_proj',
         #                             'del_char_proj'])
-        self.Bind(self.events.EVT_NOTICE, self.notice_handler)
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.list_select)
 
+    def resources_loaded(self, event):
+        self.DeleteAllItems()
+        for __, character in self.resources.cast.characters.items():
+            self.load_character(character=character)
+
     def notice_handler(self, event):
-        if event.notice == 'projload':
-            self.reload()
-        elif event.notice == 'loadchar':
+        if event.notice == 'loadchar':
             self.load_character(name=event.data.charname)
         elif event.notice == 'charadded':
             self.new_character(event.data.charname, event.data.chardef)
@@ -110,11 +118,6 @@ class CharactersPane(wx.ListCtrl):
 
         dia.Destroy()
 
-    def reload(self):
-        self.resources.cast.reload()
-        self.DeleteAllItems()
-        for __, character in self.resources.cast.characters.items():
-            self.load_character(character=character)
 
     def list_select(self, event):
         self.set_active_character(event.m_itemIndex)
@@ -163,7 +166,20 @@ class CharactersPane(wx.ListCtrl):
 
         dia.Destroy()
 
-    def load_character(self, name='', character=None):
+    def load_character(self, event):
+        character = self.resources._catalog['character'][event.data.asset_id]
+        sprite = character.active_sprite
+        costume = sprite.costumes.active
+        bitmap = costume.bitmap
+        image = wx.ImageFromBitmap(bitmap)
+        image_scaled = image.Scale(30, 30, wx.IMAGE_QUALITY_HIGH)
+        sprite_bitmap = wx.BitmapFromImage(image_scaled)
+        self.il.Add(sprite_bitmap)
+        index = self.GetItemCount()
+        index = self.InsertImageStringItem(index, character.name, 0)
+
+
+    def load_character_old(self, name='', character=None):
         if character is None:
             character = self.resources.cast.get_character(name=name)
         sprite_builder = character.get_sprite_builder(index=0)
@@ -171,11 +187,4 @@ class CharactersPane(wx.ListCtrl):
             sprite_builder.costumes.costumes_list[0]]
         self.events.send('spriteloaded', costume=costume)
         width, height, raw_image = costume.get_raw_image()
-        bitmap = wx.BitmapFromBufferRGBA(width, height, raw_image)
-        image = wx.ImageFromBitmap(bitmap)
-        image_scaled = image.Scale(30, 30, wx.IMAGE_QUALITY_HIGH)
-        sprite_bitmap = wx.BitmapFromImage(image_scaled)
-        self.il.Add(sprite_bitmap)
-        index = self.GetItemCount()
-        index = self.InsertImageStringItem(index, character.name, 0)
         self.resources.cast.set_index(character.name, index)

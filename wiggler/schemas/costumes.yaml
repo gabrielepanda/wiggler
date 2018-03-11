@@ -4,6 +4,6 @@ hard_deps:
     - sheets
 # for reference only
 schema:
-    id: uuid
-    sheet_id: uuid
-    rect: rect tuple
+    name: ""
+    sheet_id: ""
+    rect: ""

@@ -1,26 +1,13 @@
 from wiggler.common.resource import Resource
 
-project_asset_file_content = {
-    "name": "project",
-    "characters": [],
-    "background" : {
-        "type": "solid",
-        "color": "255, 255, 255",
-    },
-}
-
-
 class Project(Resource):
 
-    def __init__(self, asset_id):
-        super(Project, self).__init__('projects', asset_id)
+    def __init__(self, meta, **kwargs):
+        super(Project, self).__init__(meta, **kwargs)
 
         self.name = self._meta['name']
         self.characters = self._meta['characters']
         self.background = self._meta['background']
-
-    def generate_new_meta(self):
-        return project_asset_file_content
 
     def change_default_background(self, back_type, back_spec):
         background_def = {

@@ -1,3 +1,14 @@
+import wx
+
+from wiggler.core.resources.costumes import Costume as CoreCostume
+
+class Costume(CoreCostume):
+
+    def __init__(self, meta, **kwargs):
+        super(Costume, self).__init__(meta, **kwargs)
+        sheet_bitmap = self.sheet.bitmap
+        rect = wx.Rect(*self.rect)
+        self.bitmap = sheet_bitmap.GetSubBitmap(rect)
 
 class SelectCostume(wx.ListCtrl):
 

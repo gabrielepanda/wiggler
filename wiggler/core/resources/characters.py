@@ -1,26 +1,18 @@
-import pygame
+from wiggler.common.resource import Resource
 
-class Character(pygame.sprite.Group):
+class Character(Resource):
 
-    def __init__(self, resources, name, definition, **params):
-        super(Character, self).__init__()
-        self.name = name
-        self.resources = resources
-        self.definition = definition
-        self.builders = {}
-        self.builders_list = []
-        self.active_sprite = 0
-        sprite_names = definition['sprites']
-        for name in sprite_names:
-            self.add_sprite(name)
+    def __init__(self, meta, **kwargs):
+        super(Character, self).__init__(meta, **kwargs)
 
-    def add_sprite(self, sprite_name):
-        self.builders_list.append(sprite_name)
-        sprite_builder = self.resources.load_resource('sprites', sprite_name)
-        self.builders[sprite_name] = sprite_builder
-        if sprite_name not in self.definition['sprites']:
-            self.definition['sprites'].append(sprite_name)
-            self.definition['modified'] = True
+        self.name = self._meta['name']
+        self.sprites = {}
+        for asset_id in self._meta['sprites']:
+            self.add_sprite(asset_id)
+
+    def add_sprite(self, asset_id):
+        sprite = self._manager.get_resource('sprite', asset_id)
+        self.sprites[asset_id] = sprite
 
     def remove_sprite(self, sprite_name):
         self.builders_list.remove(sprite_name)
@@ -28,10 +20,6 @@ class Character(pygame.sprite.Group):
         self.active_sprite = 0
         self.definition['sprites'].remove(sprite_name)
         self.definition['modified'] = True
-
-    def set_active_sprite(self, spriteindex):
-        if spriteindex is not None:
-            self.active_sprite = spriteindex
 
     def build_sprites(self):
         for name, builder in self.builders.items():

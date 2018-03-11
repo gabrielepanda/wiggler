@@ -2,7 +2,7 @@
 id: 5172ef5f-0e2b-434b-8752-f9d4bef7a230
 name: ship
 costumes:
-    - 'ship_idle'
+    - d1f6a723-3e25-411d-b847-0957184e5c0b
 sounds: []
 animations: []
 # GUI/rendering attributes
