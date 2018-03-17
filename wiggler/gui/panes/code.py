@@ -12,7 +12,6 @@ class CodePanePage(TextEditor):
                                            readonly=readonly)
 
 
-
 class CodePane(wx.Notebook):
 
     def __init__(self, parent):
@@ -38,9 +37,6 @@ class CodePane(wx.Notebook):
         elif event.notice == 'selfsuff_change':
             self.save_active_buffers()
             self.set_sprite_code_buffers(self.active_sprite)
-        elif event.notice == 'actsprite':
-            self.save_active_buffers()
-            self.set_sprite_code_buffers(event.data.sprite_builder)
         elif event.notice == 'preplay':
             self.save_active_buffers()
         elif event.notice == 'traceback':
@@ -64,23 +60,23 @@ class CodePane(wx.Notebook):
         for ed in editors:
             ed.Clear()
 
-    def set_sprite_code_buffers(self, sprite_builder):
-        self.active_sprite = sprite_builder
+    def set_sprite_code_buffers(self, event):
+        self.save_active_buffers()
+        self.active_sprite = self.resources._catalog['sprite'][event.data.asset_id]
         self.reload()
-        buffers = \
-            self.resources.selfsuff.get_buffers_list('sprite')
+        buffers = self.active_sprite.template.sections
         # TODO: add the possibilty to show all user_code, with
         # the ones outside of selfsuff set as read-only
-        for buffer_name in buffers:
+        for section_name in buffers:
             try:
-                buffer_text = sprite_builder.user_code[buffer_name]
+                buffer_text = self.active_sprite.code.sections[section_name]
             except KeyError:
                 # FIXME: find a better place to fill a
                 # missing user_code section
-                buffer_text = sprite_builder.user_code[buffer_name] = ''
-            self.set(buffer_name, buffer_text)
-        text = sprite_builder.code_handler.generated_code
-        self.set("generated_code", text, readonly=True)
+                buffer_text = self.active_sprite.code.sections[section_name] = ''
+            self.set_page(section_name, buffer_text)
+        #text = sprite_builder.code_handler.generated_code
+        #self.set_page("generated_code", text, readonly=True)
         # TODO(panda), get a list of sprite attributes
         # for index, attrib in enumerate(dir(MovingSprite)):
         #    self.basket_functions.InsertStringItem(index, attrib)

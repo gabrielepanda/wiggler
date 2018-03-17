@@ -6,7 +6,7 @@ costumes:
 sounds: []
 animations: []
 # GUI/rendering attributes
-self_sufficiency: 6bb22f0b-76b8-418d-8e8d-f7a8bae10c9f
+template: df189b1d-108f-4287-8f7f-83057046ee0c
 code: a8b9f98d-482e-486b-9c97-e1bdd5832667
 base_class: MovingSprite
 

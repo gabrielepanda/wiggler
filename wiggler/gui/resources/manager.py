@@ -10,6 +10,8 @@ from wiggler.gui.resources.images import Image
 from wiggler.gui.resources.projects import Project
 from wiggler.gui.resources.costumes import Costume
 from wiggler.gui.resources.sheets import Sheet
+from wiggler.gui.resources.code import Code
+from wiggler.gui.resources.templates import Template
 #from wiggler.gui.resources. import
 
 class OperationIDs(object):
@@ -50,6 +52,8 @@ class GUIResources(CoreResources, wx.Control):
             "character": Character,
             "costume": Costume,
             "sheet": Sheet,
+            "code": Code,
+            "template": Template,
         }
         self.events = EventQueue()
         event_map = {

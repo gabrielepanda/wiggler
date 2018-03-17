@@ -5,15 +5,13 @@ import wx.lib.agw.aui as aui
 
 class TracebackPane(aui.AuiNotebook):
 
-    def __init__(self, parent, resources, events):
-        self.resources = resources
-        self.events = events
+    def __init__(self, parent):
         super(TracebackPane, self).__init__(parent, -1,
                                             style=aui.AUI_NB_CLOSE_ON_ALL_TABS)
 
         self.Show()
-        self.events.subscribe(self, ['projload', 'traceback'])
-        self.Bind(self.events.EVT_NOTICE, self.notice_handler)
+        #self.Bind(self.events.EVT_NOTICE, self.notice_handler)
+        #self.events.subscribe(self, ['projload', 'traceback'])
 
     def notice_handler(self, event):
         if event.notice == 'projload':

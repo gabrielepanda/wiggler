@@ -3,15 +3,14 @@ import wx
 
 class CostumesPane(wx.ListCtrl):
 
-    def __init__(self, parent, resources, events):
+    def __init__(self, parent):
         wx.ListCtrl.__init__(self, parent, size=(100, 400), style=wx.LC_ICON)
-        self.events = events
-        self.resources = resources
         self.il = wx.ImageList(30, 30, True)
         self.AssignImageList(self.il, wx.IMAGE_LIST_NORMAL)
+        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.list_select)
+        return
         self.events.subscribe(self, ['projload', 'spriteloaded'])
         self.Bind(self.events.EVT_NOTICE, self.notice_handler)
-        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.list_select)
 
     def notice_handler(self, event):
         if event.notice == 'projload':

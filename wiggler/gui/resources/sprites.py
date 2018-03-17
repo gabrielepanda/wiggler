@@ -7,8 +7,10 @@ class Sprite(CoreSprite):
     def __init__(self, meta, **kwargs):
         super(Sprite, self).__init__(meta, **kwargs)
         # gui
-        #code_id = self._meta['code']
-        #self.code = self._manager.get_resource('code', code_id)
+        code_id = self._meta['code']
+        template_id = self._meta['template']
+        self.code = self._manager.get_resource('code', code_id)
+        self.template = self._manager.get_resource('template', template_id)
 
     def add(self):
         pass

@@ -11,13 +11,10 @@ tilemap = dict()
 
 class StagePane(wx.Control):
 
-    def __init__(self, parent, id, resources, events, **options):
+    def __init__(self, parent, id, **options):
         # Skip initialization for now
-        return
         wx.Control.__init__(*(self, parent, id), **options)
         self.parent = parent
-        self.stage = Stage(self.resources)
-        self.events = EventQueue()
 
         self._initialized = 0
         self._resized = 0
@@ -25,9 +22,12 @@ class StagePane(wx.Control):
         self.__needsDrawing = 1
         self.size = self.GetSizeTuple()
 
-        self.stageevents = StageEvents()
-        wx.EVT_SIZE(self, self.OnSize)
         wx.EVT_IDLE(self, self.OnIdle)
+        wx.EVT_SIZE(self, self.OnSize)
+        return
+        self.stageevents = StageEvents()
+        self.stage = Stage(self.resources)
+        self.events = EventQueue()
         self.timer = wx.Timer(self)
         self.events.subscribe(self, ['projload', 'play', 'stop'])
         self.Bind(wx.EVT_PAINT, self.OnPaint)
@@ -56,9 +56,11 @@ class StagePane(wx.Control):
             if not self._initialized:
                 hwnd = self.GetHandle()
                 os.environ['SDL_WINDOWID'] = str(hwnd)
+                print "WIN HANDLE"
+                print str(hwnd)
                 if sys.platform == 'win32':
                     os.environ['SDL_VIDEODRIVER'] = 'windib'
-                self.stage.start()
+                #self.stage.start()
                 self._initialized = 1
         else:
             self._resized = 0

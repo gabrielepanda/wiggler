@@ -131,6 +131,7 @@ class Event(object):
         self.GUI_READY = wx.NewId()
         self.CHARACTER_RESOURCE_LOADED = wx.NewId()
         self.TEST_EVENT = self.new_event()
+        self.CHARACTER_SELECTED = wx.NewId()
 
 
         # TO FIX

@@ -52,18 +52,16 @@ class RootWindow(wx.Frame):
         self.toolbar = ToolBar(self)
         self.code_pane = CodePane(self)
         self.characters_pane = CharactersPane(self)
-        #self.costumes_pane = CostumesPane(
-        #    self, self.resources, self.events)
+        self.costumes_pane = CostumesPane(self)
         #self.sprites_pane = SpritesPane(self, self.resources, self.events)
-        #self.traceback = TracebackPane(self, self.resources, self.events)
-        #self.stage_pane = StagePane(
-        #    self, wx.ID_ANY, self.resources, self.events,
-        #    size=self.stage_resolution)
+        self.traceback = TracebackPane(self)
+        self.stage_pane = StagePane(
+            self, wx.ID_ANY, size=self.stage_resolution)
         self.setup_basket_classes()
         self.setup_basket_members()
 
         self.statusbar = self.CreateStatusBar(2)
-        #self.statusbar.SetStatusText("Self-Sufficiency Level: 0")
+        self.statusbar.SetStatusText("Self-Sufficiency Level: 0")
         self.SetMenuBar(self.menubar)
 
         self.widget_placement()
@@ -72,16 +70,16 @@ class RootWindow(wx.Frame):
 
     def widget_placement(self):
         sizer = wx.GridBagSizer(hgap=1, vgap=1)
-        #sizer.Add(self.stage_pane, (0, 0))
+        sizer.Add(self.stage_pane, (0, 0))
         sizer.Add(self.basket_classes, (0, 1), span=(1, 1), flag=wx.EXPAND)
         sizer.Add(self.basket_functions, (1, 1), span=(1, 1), flag=wx.EXPAND)
-        #sizer.Add(self.costumes_pane, (0, 2), span=(2, 1), flag=wx.EXPAND)
+        sizer.Add(self.costumes_pane, (0, 2), span=(2, 1), flag=wx.EXPAND)
         sizer.Add(self.code_pane, (0, 3), span=(2, 1), flag=wx.EXPAND)
         sizer.Add(self.characters_pane, (1, 0), flag=wx.EXPAND)
-        #sizer.Add(self.traceback, (2, 0), span=(1, 4), flag=wx.EXPAND)
+        sizer.Add(self.traceback, (2, 0), span=(1, 4), flag=wx.EXPAND)
         sizer.Fit(self)
-        #sizer.AddGrowableCol(3)
-        #sizer.AddGrowableRow(2)
+        sizer.AddGrowableCol(3)
+        sizer.AddGrowableRow(2)
         self.SetSizer(sizer)
 
     def setup_basket_members(self):

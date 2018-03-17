@@ -1,5 +1,5 @@
 from wiggler.common.resource import Resource
-from wiggler.core.resources.templates import Template
+from wiggler.gui.resources.templates import Template
 
 class SelfSufficiency(Resource):
 

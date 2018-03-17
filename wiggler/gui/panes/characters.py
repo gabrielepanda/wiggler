@@ -1,7 +1,7 @@
 import wx
 
 import wiggler.gui.dialogs as dialogs
-from wiggler.gui.events import guievent, GUICommandHandler
+from wiggler.gui.events import guievent, GUICommandHandler, EventQueue
 from wiggler.gui.resources.manager import GUIResources
 
 class CharactersPane(wx.ListCtrl):
@@ -9,6 +9,7 @@ class CharactersPane(wx.ListCtrl):
     def __init__(self, parent):
         wx.ListCtrl.__init__(self, parent, style=wx.LC_ICON)
         self.resources = GUIResources()
+        self.events = EventQueue()
         self.il = wx.ImageList(30, 30, True)
         self.AssignImageList(self.il, wx.IMAGE_LIST_NORMAL)
         command_map = {
@@ -177,7 +178,10 @@ class CharactersPane(wx.ListCtrl):
         self.il.Add(sprite_bitmap)
         index = self.GetItemCount()
         index = self.InsertImageStringItem(index, character.name, 0)
-
+        #self.events.broadcast(guievent.CHARACTER_SELECTED, event.data)
+        data = {}
+        data['asset_id'] = sprite._meta['id']
+        self.events.broadcast(guievent.SPRITE_SELECTED, **data)
 
     def load_character_old(self, name='', character=None):
         if character is None:

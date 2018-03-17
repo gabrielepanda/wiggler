@@ -1,17 +1,17 @@
 ---
 id: df189b1d-108f-4287-8f7f-83057046ee0c
-file: basic.j2
+data_file: basic.j2
 element: sprite
 ---
 id: 63b8d8d6-d813-4a3a-b29a-a11992b090da
-file: intermediate.j2
+data_file: intermediate.j2
 element: sprite
 ---
 id: 60c4b087-357e-4bfc-8827-5efe79bd9e2c
-file: basic_controller.j2
+data_file: basic_controller.j2
 element: controller
 ---
 id: f62da82c-075f-4136-91cc-3186ccb944b4
-file: intermediate_controller.j2
+data:file: intermediate_controller.j2
 element: controller
 ...
