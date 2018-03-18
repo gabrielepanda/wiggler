@@ -64,7 +64,7 @@ class CodePane(wx.Notebook):
         self.save_active_buffers()
         self.active_sprite = self.resources._catalog['sprite'][event.data.asset_id]
         self.reload()
-        buffers = self.active_sprite.template.sections
+        buffers = self.active_sprite.code.template.sections
         # TODO: add the possibilty to show all user_code, with
         # the ones outside of selfsuff set as read-only
         for section_name in buffers:

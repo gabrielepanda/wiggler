@@ -11,7 +11,6 @@ class Wardrobe(object):
         for asset_id in costumes_ids:
             self.add_costume(asset_id)
 
-        print self.costumes_ids
 
         try:
             self.active = self.costumes[self.costumes_ids[0]]

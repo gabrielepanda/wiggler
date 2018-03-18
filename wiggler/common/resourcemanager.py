@@ -31,7 +31,6 @@ class ResourceManager(object):
             data_filepath = os.path.join(data_dir, data_filename)
             extra_meta['_data_filepath'] = data_filepath
 
-        print resource_type, asset_id
         resource = factory(meta, **extra_meta)
 
         self._catalog[resource_type][asset_id] = resource

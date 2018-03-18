@@ -1,4 +1,5 @@
 from wiggler.gui.resources.manager import guiop, GUIResources
+from wiggler.gui.events import guievent
 
 class ToolBar(object):
 
@@ -11,7 +12,13 @@ class ToolBar(object):
         buttons = [
             ('f3006821-3470-452f-967b-8a0cd9b88039',
              "Add Sprite to project library",
-             guiop.ADD_SPRITE)
+             guiop.ADD_SPRITE),
+            ('4b22a5d0-a141-4755-b1b4-f5bfca4046d0',
+             "Run Project",
+             guievent.PROJECT_RUN),
+            ('37cfb676-a5eb-4bbb-a9c8-b3f437f1dfc4',
+             "Stop Project",
+             guievent.PROJECT_STOP)
 #            ('play', 'Play'),
 #            ('stop', 'Stop'),
 #            ('incss', 'Increase Sufficiency Level', self.incss),

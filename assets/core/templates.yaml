@@ -12,6 +12,6 @@ data_file: basic_controller.j2
 element: controller
 ---
 id: f62da82c-075f-4136-91cc-3186ccb944b4
-data:file: intermediate_controller.j2
+data_file: intermediate_controller.j2
 element: controller
 ...

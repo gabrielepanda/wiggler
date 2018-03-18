@@ -10,7 +10,6 @@ class Sheet(CoreSheet):
         super(Sheet, self).__init__(meta, **kwargs)
         self.bitmap = wx.Bitmap(self._data_filepath)
         color = wx.Colour()
-        print self.color_key
         color.Set(*self.color_key)
         self.bitmap.SetMaskColour(color)
 

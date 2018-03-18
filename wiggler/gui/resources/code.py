@@ -1,37 +1,29 @@
-import imp
-import re
-import sys
-import traceback
+import os
 
+from wiggler.common.resource import Resource
+#from wiggler.core.resources.snippets import Snippet
 
 START = 0
 END = 1
 
-# If code has errors, do not generate
-
-
-class ProjectLaunch(object):
-
-    def __init__(self):
-        subprocess.open('python project/main.py')
-        # Send commands and events
-        send(stdin)
-        # Receive traceback infos
-        recv(stderr)
-
 class CodeSection(object):
 
-    def __init__(self, code, offsets, deloopify=True):
+    def __init__(self, code, start_offset, **section_options):
+        #self.original_offsets = (self.template.section_offset[section_name],)
+        self.original_offsets = (start_offset,)
+        self.section_options = section_options
         self.yield_inserted_lines = []
+
+    def update_code(self, code):
         self.original_code = code
         self.mangled_code = code
         self.offsets = offsets
-        self.deloopify = deloopify
-        if self.deloopify:
+        if self.section_options.get('deloopify', True):
+            self.yield_inserted_lines = []
             self.deloopify()
         self.mangled_size = len(self.mangled_code.splitlines())
         self.offsets = (
-            self.offsets[START], self.offsets[START] + self.mangled_size)
+            self.original_offsets[START], self.original_offsets[START] + self.mangled_size)
 
     def change_start_offset(self, increment):
         def incr(offset):
@@ -104,86 +96,48 @@ class CodeSection(object):
             index, line = self.find_next_line(index, code_lines)
         self.mangled_code = '\n'.join(code_lines)
 
-class CodeFile(object):
+class Code(Resource):
 
-    def __init__(self):
-        pass
-
-class CodeHandler(object):
-
-    def __init__(self, resources, element, module_name, user_code,
-                 module_filename):
-        self.module_name = module_name
-        self.element = element
-        self.resources = resources
-        self.module_filename = module_filename
+    def __init__(self, meta, **kwargs):
+        super(Code, self).__init__(meta, **kwargs)
+        #self.sprite_asset_id = "ciccio"
+        #self.module_filename = os.path.join(project_dir, "src", sprite_asset_id + ".py")
+        #self.module_name = asset_id
         self.generated_code = ''
         self.sections = {}
-        self.user_code = user_code
         self.compile_error = False
         self.template = None
-        self.set_template()
         self.module = None
         self.traceback_message = None
         self.traceback_line = None
         self.errored_section = None
         self.errored_line = None
+        template_id = self._meta['template']
+        self.template = self._manager.get_resource('template', template_id)
+        #selfsuff_id = self._meta['selfsuff']
+        #self.selfsuff = self._manager.get_resource('selfsuff', selfsuff_id)
 
-        self.generate()
-
-    def set_template(self):
-        self.template = self.resources.selfsuff.get_template(self.element)
-
-    def update_user_code(self, user_code):
-        self.user_code = user_code
-        self.generate()
-
-    def find_section_line(self, line):
-        for name, section in self.sections.items():
-            if line >= section.offsets[START] and line <= section.offsets[END]:
-                self.errored_section = name
-                self.errored_section_line = section.get_original_line(line)
-                break
-
-    def handle_exception(self, exc_type, exc_value, exc_traceback, exc=None):
-        if exc is not None:
-            self.traceback_line = exc.lineno
-        else:
-            c_prev = exc_traceback
-            c_cur = exc_traceback
-            while c_cur is not None:
-                c_prev = c_cur
-                c_cur = c_cur.tb_next
-            self.traceback_line = c_prev.tb_lineno
-        self.traceback_message = traceback.format_exc()
-        self.compile_error = True
-        self.find_section_line(self.traceback_line)
-
-    def generate(self):
-        self.traceback_message = None
-        self.traceback_line = None
-        self.errored_section = None
-        self.errored_line = None
-        self.compile_error = False
-        mangled_user_code = {}
-
-        sections = self.resources.selfsuff.get_buffers_list(self.element)
-        for section_name, options in sections.items():
+        sections_code = self._meta['sections']
+        # code may contain sections only useful for different self sufficiency levels.
+        # itern on existing sections in the template
+        for section_name, offsets in self.template.sections.items():
+            #section_options = self.selfsuff.sections['options']
+            section_options = {}
+            start_offset = offsets['start_offset']
             try:
-                code = self.user_code[section_name]
+                code = sections_code[section_name]
             except KeyError:
                 # Section does not exist in code
+                # this should not happen
                 continue
-            try:
-                offsets = (self.template.section_offset[section_name],)
-            except KeyError:
-                # section does not exist in template
-                continue
-            deloopify = options.get('deloopify', True)
-            self.sections[section_name] = CodeSection(code, offsets,
-                                                      deloopify=deloopify)
-            mangled_user_code[section_name] = \
-                self.sections[section_name].mangled_code
+            self.sections[section_name] = CodeSection(code, start_offset, **section_options)
+
+        #for section_name, snippet_id in sections:
+        #    snippet = Snippet(snippet_id)
+        #    snippet_code = snippet.load_data()
+        #    self.sections[section_name] = snippet_code
+
+    def generate_module_src(self):
         # adjust offsets for all the successive sections
         for section in self.sections.values():
             start_offset = section.offsets[START]
@@ -194,25 +148,8 @@ class CodeHandler(object):
                     section.change_start_offset(section_size - 1)
 
         self.generated_code = self.template.render(mangled_user_code)
+
+    def write_module_src(self):
         with open(self.module_filename, "w") as module_file:
             module_file.write(self.generated_code)
 
-        try:
-            self.module = imp.load_source(self.module_name,
-                                          self.module_filename)
-        except Exception as exc:
-            self.module = None
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            if exc_type == SyntaxError:
-                self.handle_exception(exc_type, exc_value, exc_traceback,
-                                      exc=exc)
-            sys.excepthook(exc_type, exc_value, exc_traceback)
-
-        finally:
-            try:
-                del exc_traceback
-            except Exception:
-                pass
-
-        if not self.compile_error:
-            sys.modules[self.module_name] = self.module

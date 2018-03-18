@@ -7,7 +7,6 @@ class CoreOperations(object):
         #self.load_conf()
         #self.resman = CoreResources(self.conf)
         self.resources = CoreResources()
-        print "NEW PROJECT"
         self.project = self.resman.new_resource('project')
 
     def load_conf(self):

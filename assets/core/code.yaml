@@ -1,5 +1,6 @@
 ---
 id: a8b9f98d-482e-486b-9c97-e1bdd5832667
+template: df189b1d-108f-4287-8f7f-83057046ee0c
 sections:
     __init__: |
         print "hello"

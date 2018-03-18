@@ -260,7 +260,6 @@ class AssetTree(object):
         self.conf_filename = conf_filename
         with open(conf_filename, "r") as conf_file:
             conf = yaml.safe_load(conf_file)
-        print conf
         self.tree_id = conf['id']
         self.global_catalog.libraries[library]['trees'].append(self.tree_id)
         self.base_dir = os.path.join(base_dir, conf['assets_dir'])
@@ -278,7 +277,6 @@ class AssetTree(object):
 
         for asset_type, location in self.assets_locations.items():
             self.set_meta_files(asset_type)
-            log.info("scanning: %s" % asset_type)
             with open(self.meta_files[asset_type], "r") as meta_file:
                 assets = list(yaml.safe_load_all(meta_file))
 

@@ -119,9 +119,9 @@ class GUIResources(CoreResources, wx.Control):
         dlg.Destroy()
 
     def event_handler(self, event):
-        pass
-        #print guiop.ADD_SPRITE
-        #print event.GetId()
+        print guiop.ADD_SPRITE
+        command_type = event.GetId()
+        self.events.broadcast(command_type)
 
     def notice_dispatcher(self, event):
         menu_id = event.GetId()
