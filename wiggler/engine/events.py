@@ -1,7 +1,9 @@
 import pygame
+from common import Singleton
 
 
 class EventQueue(object):
+    __metaclass__ = Singleton
 
     def __init__(self):
         self.subs = {}
@@ -27,6 +29,8 @@ class EventQueue(object):
 
     def update(self):
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
             try:
                 spritegroup = self.subs[event.type]
             except KeyError:

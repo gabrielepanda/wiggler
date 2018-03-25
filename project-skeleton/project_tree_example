@@ -1,0 +1,11 @@
+name
+  \- assets from project
+  \- name
+    \- core
+    \- engine
+    \- src
+        \- UUID1.py
+        \- UUID2.py
+        \- UUID3.py
+    \- main.py
+    \- controller.py

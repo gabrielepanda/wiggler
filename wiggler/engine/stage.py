@@ -1,7 +1,5 @@
 import pygame
 
-from wiggler.core.code_handler import CodeHandler
-
 
 class Controller(object):
 
@@ -158,7 +156,6 @@ class Stage(object):
         if self.pause:
             return
         else:
-            self.resources.engine_events.update()
             self.resources.clock.tick()
             elements = self.controller.update()
             self.background_draw(self.resources.background)
