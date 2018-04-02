@@ -1,4 +1,4 @@
-from wiggler.common.resource import Resource
+from wiggler.core.resources.base import Resource
 
 class Snippet(Resource):
 

@@ -16,17 +16,19 @@ project_tree_file_content = {
 class ProjectLibrary(object):
 
     def __init__(self, project_file):
-        self._render_dir = tempfile.mkdtemp(prefix="wiggler-project-")
-        if project_file is None:
-            self.create_empty_project()
-        else:
+        if project_file is not None:
+            self._render_dir = tempfile.mkdtemp(prefix="wiggler-project-")
             self.unzip_project()
+        elif project_dir is not None:
+            self._render_dir = project_dir
+        else:
+            self.create_new_project()
 
     def wipe_render_dir(self):
         shutil.rmtree(self._render_dir)
         os.mkdir(self._render_dir)
 
-    def create_empty_project(self):
+    def create_new_project(self):
         self.assets_dir = os.path.join(self._render_dir, "assets")
         os.mkdir(self.assets_dir)
         self.src_dir = os.path.join(self._render_dir, "src")

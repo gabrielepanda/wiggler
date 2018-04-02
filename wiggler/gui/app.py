@@ -3,7 +3,7 @@ import sys
 import traceback
 import wx
 
-from wiggler.common.configuration import Configuration
+from wiggler.core.configuration import Configuration
 from wiggler.gui.events import guievent, EventQueue
 from wiggler.gui.resources.manager import GUIResources
 from wiggler.gui.root import RootWindow

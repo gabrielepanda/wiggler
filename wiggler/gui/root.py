@@ -3,7 +3,7 @@ import wx.py
 
 import wiggler.gui.dialogs as dialogs
 
-from wiggler.common.configuration import Configuration
+from wiggler.core.configuration import Configuration
 from wiggler.gui.events import guievent, GUICommandHandler, EventQueue
 from wiggler.gui.panes.characters import CharactersPane
 from wiggler.gui.panes.costumes import CostumesPane

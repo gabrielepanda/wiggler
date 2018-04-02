@@ -1,7 +1,7 @@
 import os
 
-from wiggler.common.resource import Resource
-#from wiggler.core.resources.snippets import Snippet
+from wiggler.core.resources.base import Resource
+#from wiggler.core.resources.bases.snippets import Snippet
 
 START = 0
 END = 1

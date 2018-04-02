@@ -1,7 +1,7 @@
 import wx
 
-from wiggler.common.resourcemanager import ResourceManager
-from wiggler.common.singleton import Singleton
+from wiggler.core.resourcemanager import ResourceManager
+from wiggler.core.singleton import Singleton
 from wiggler.core.resources.manager import CoreResources
 from wiggler.gui.events import guievent, GUICommandHandler, EventQueue
 from wiggler.gui.resources.sprites import Sprite

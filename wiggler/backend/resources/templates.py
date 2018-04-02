@@ -1,7 +1,7 @@
 import jinja2
 import os
 
-from wiggler.common.resource import Resource
+from wiggler.core.resources.base import Resource
 
 
 class Template(Resource):

@@ -1,7 +1,7 @@
 import unittest
 import pprint
 
-from wiggler.common.assets import AssetCatalog
+from wiggler.core.assets import AssetCatalog
 
 
 class BasicTest(unittest.TestCase):

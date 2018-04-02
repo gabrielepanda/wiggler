@@ -1,0 +1,7 @@
+
+ENGINE
+
+vim wiggler/core/resources/manager.py
+ AssetCatalog class must set with parameter or self.CatalogClass
+
+CODE FLUSHING

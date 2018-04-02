@@ -1,6 +1,6 @@
 import wx
 
-from wiggler.common.singleton import Singleton
+from wiggler.core.singleton import Singleton
 
 
 class Data(object):

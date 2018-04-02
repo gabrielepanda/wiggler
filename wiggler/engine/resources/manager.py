@@ -1,4 +1,7 @@
-from wiggler_project.common.resourcemanager import ResourceManager
+import os
+import imp
+
+from wiggler_project.core.resources.manager import ResourceManager
 
 class EngineResources(ResourceManager):
 

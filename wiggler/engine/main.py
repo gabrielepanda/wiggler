@@ -2,6 +2,7 @@ import pygame
 
 from stage import Stage
 from multiprocessing.connection import Client
+from wiggler_project.engine.resources.manager import EngineResources
 
 
 class Configuration(object):
@@ -42,7 +43,7 @@ clock.tick(conf.max_fps)
 clock.tick(conf.max_fps)
 
 
-resources = ResourceManager()
+resources = EngineResources()
 events = EventQueue()
 stage = Stage()
 # -------- Main Program Loop -----------

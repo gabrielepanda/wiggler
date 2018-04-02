@@ -1,7 +1,7 @@
 import yaml
 
-from wiggler.common.paths import Paths
-from wiggler.common.singleton import Singleton
+from wiggler.core.paths import Paths
+from wiggler.core.singleton import Singleton
 
 class Configuration(object):
     __metaclass__ = Singleton
